@@ -9,7 +9,6 @@ RSpec.describe User, type: :model do
       should validate_presence_of(:last_name)
       should validate_presence_of(:email)
       should validate_presence_of(:phone)
-      should validate_presence_of(:password)
     end
 
   end
