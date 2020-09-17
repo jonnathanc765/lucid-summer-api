@@ -7,7 +7,6 @@ RSpec.describe "Users", type: :request do
 
         describe "without data in DB" do 
             it "should return OK" do
-                payload = JSON.parse(response.body)
                 expect(payload).to be_empty  
                 expect(payload)
             end
@@ -24,7 +23,6 @@ RSpec.describe "Users", type: :request do
 
                 it "should return a list of users" do
                     get '/users'
-                    payload = JSON.parse(response.body)
                     expect(payload.size).to eq(users.size)
                     expect(response).to have_http_status(:ok)
                 end
@@ -36,7 +34,6 @@ RSpec.describe "Users", type: :request do
                 
                 it "should return a single user by id param" do
                     get "/users/#{user.id}"
-                    payload = JSON.parse(response.body)
                     expect(payload["id"]).to eq(user.id)
                     expect(response).to have_http_status(:ok)
                 end
@@ -56,7 +53,6 @@ RSpec.describe "Users", type: :request do
                 # sign_in user
                 req_payload = { first_name: "Jose", last_name: "Perez", email: "jose@perez.com", phone: "+512 584 84765", password: "password" }
                 post "/users", :params => req_payload
-                payload = JSON.parse(response.body)
                 expect(payload).to_not be_empty
                 expect(payload["id"]).to_not be_nil
                 expect(response).to have_http_status(:created)
@@ -67,7 +63,6 @@ RSpec.describe "Users", type: :request do
                 # sign_in user
                 req_payload = { first_name: "", last_name: "", email: "invalid-email", phone: "", password: "" }
                 post "/users", :params => req_payload
-                payload = JSON.parse(response.body)
                 expect(payload).to_not be_empty 
                 expect(payload["error"]).to_not be_empty 
                 expect(response).to have_http_status(:unprocessable_entity)
@@ -85,21 +80,20 @@ RSpec.describe "Users", type: :request do
 
             it "with valid data it success" do
                 # sign_in user
+                
                 req_payload = { first_name: "Jose", last_name: "Perez", email: "jose@perez.com", phone: "+512 584 84765", password: "password" }
-                put "/users/#{user.id}", :params => req_payload
-                payload = JSON.parse(response.body)
+                put "/users/#{user.id}", params: req_payload
                 expect(payload).to_not be_nil 
                 expect(payload["id"]).to eq(user.id)
                 expect(response).to have_http_status(:ok)
             end
 
             let!(:user) { create(:user) }
-
+            
             it "with invalid data should return a error message" do
                 # sign_in user
                 req_payload = { first_name: "", last_name: "", email: "invalid-email", phone: "" }
-                put "/users/#{user.id}", :params => req_payload
-                payload = JSON.parse(response.body)
+                put "/users/#{user.id}", params: req_payload
                 expect(payload).to_not be_empty 
                 expect(payload["error"]).to_not be_empty 
                 expect(response).to have_http_status(:unprocessable_entity)
