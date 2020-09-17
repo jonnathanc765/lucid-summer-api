@@ -17,10 +17,12 @@ gem 'puma', '~> 4.1'
 # gem 'bcrypt', '~> 3.1.7'
 # gem 'mysql2"
 gem 'mysql2', '>= 0.4.4', '< 0.6.0'
-# for yml enviroment variables
+# Gem for yml enviroment variables
 gem 'figaro'
-# AWS
+# AWS gem
 gem "aws-sdk-s3", require: false
+# Roles managment gem
+gem "rolify"
 
 # Use Active Storage variant
 # gem 'image_processing', '~> 1.2'
