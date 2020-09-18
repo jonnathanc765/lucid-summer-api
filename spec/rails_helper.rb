@@ -52,8 +52,11 @@ RSpec.configure do |config|
     end
   end
 
+  # Helpers
   config.include FactoryBot::Syntax::Methods
   config.include JsonApiHelpers
+  config.include Requests::AuthHelpers::Includables, type: :request
+  config.extend Requests::AuthHelpers::Extensions, type: :request
 
   config.include Devise::Test::IntegrationHelpers, type: :request
 

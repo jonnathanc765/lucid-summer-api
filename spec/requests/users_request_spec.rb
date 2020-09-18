@@ -50,7 +50,6 @@ RSpec.describe "Users", type: :request do
 
             let!(:user) { create(:user) }
             it "with valid data it success" do
-                # sign_in user
                 req_payload = { first_name: "Jose", last_name: "Perez", email: "jose@perez.com", phone: "+512 584 84765", password: "password" }
                 post "/users", :params => req_payload
                 expect(payload).to_not be_empty
@@ -60,7 +59,6 @@ RSpec.describe "Users", type: :request do
 
             let!(:user) { create(:user) }
             it "with invalid data should return a error message" do
-                # sign_in user
                 req_payload = { first_name: "", last_name: "", email: "invalid-email", phone: "", password: "" }
                 post "/users", :params => req_payload
                 expect(payload).to_not be_empty 
@@ -79,7 +77,6 @@ RSpec.describe "Users", type: :request do
             let!(:user) { create(:user) }
 
             it "with valid data it success" do
-                # sign_in user
                 
                 req_payload = { first_name: "Jose", last_name: "Perez", email: "jose@perez.com", phone: "+512 584 84765", password: "password" }
                 put "/users/#{user.id}", params: req_payload
@@ -91,7 +88,6 @@ RSpec.describe "Users", type: :request do
             let!(:user) { create(:user) }
             
             it "with invalid data should return a error message" do
-                # sign_in user
                 req_payload = { first_name: "", last_name: "", email: "invalid-email", phone: "" }
                 put "/users/#{user.id}", params: req_payload
                 expect(payload).to_not be_empty 
