@@ -22,7 +22,6 @@ class UsersController < ApplicationController
         render json: @user, status: :ok
     end 
 
-
     private 
     
     def create_params 

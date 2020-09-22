@@ -16,11 +16,10 @@ class CategoriesController < ApplicationController
         render json: @category, status: :ok
     end
     
-
     private 
 
     def category_params 
-        params.permit(:name, :description)
+        params.permit(:name, :description, :color)
     end
 
 end

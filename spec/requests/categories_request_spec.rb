@@ -39,10 +39,13 @@ RSpec.describe "Categories", type: :request do
 
             it 'save correctly' do
                 
-                req_payload = {name: "Herb", description: "Some herbs"}
+                req_payload = {name: "Herb", description: "Some herbs", color: '#4F5897'}
                 post "/categories", params: req_payload
                 expect(response).to have_http_status(:created)
-                expect(payload["id"]).to_not be_nil  
+                expect(payload["id"]).to_not be_nil
+                expect(payload["name"]).to eq("Herb")
+                expect(payload["description"]).to eq("Some herbs")
+                expect(payload["color"]).to eq("#4F5897")
 
             end
 
@@ -66,12 +69,15 @@ RSpec.describe "Categories", type: :request do
 
         it "it update a existing category" do
 
-            req_payload = {name: "Herb", description: "Some herbs"}
+            req_payload = {name: "Herb", description: "Some herbs", color: '#4F5897'}
             put "/categories/#{category.id}", params: req_payload 
 
             expect(response).to have_http_status(:ok)
             expect(payload["id"]).to_not be_nil 
-            expect(payload["id"]).to eq(category.id)    
+            expect(payload["id"]).to eq(category.id)
+            expect(payload["name"]).to eq("Herb")
+            expect(payload["description"]).to eq("Some herbs")
+            expect(payload["color"]).to eq("#4F5897") 
             
         end
         
