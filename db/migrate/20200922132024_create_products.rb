@@ -1,7 +1,7 @@
 class CreateProducts < ActiveRecord::Migration[6.0]
   def change
     create_table :products do |t|
-      t.belongs_to :category, foreign_key: "category_id"
+      t.belongs_to :category, foreign_key: "category_id", on_delete: :nullify
       t.string :name
       t.float :retail_price
       t.float :wholesale_price

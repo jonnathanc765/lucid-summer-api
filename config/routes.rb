@@ -5,7 +5,7 @@ Rails.application.routes.draw do
   # Resources 
   resources :users, only: [:index, :show, :create, :update]
   resources :categories, only: [:index, :create, :update]
-  resources :products, only: [:index]
+  resources :products, only: [:index, :show, :create, :update, :destroy]
 
 
   # Custom routes 
