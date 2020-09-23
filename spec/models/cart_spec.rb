@@ -1,5 +1,11 @@
 require 'rails_helper'
 
 RSpec.describe Cart, type: :model do
-  # pending "add some examples to (or delete) #{__FILE__}"
+  describe "validate fields" do
+      it "should validate all fields" do
+        should validate_presence_of(:user_id)
+      end
+      
+  end
+  
 end
