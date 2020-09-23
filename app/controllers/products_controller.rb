@@ -26,7 +26,7 @@ class ProductsController < ApplicationController
     def destroy 
         p = Product.find(params[:id])
         p.destroy
-        render json: "Record deleted", status: 200
+        render json: {message: "Record deleted"}, status: 200
     end
 
     

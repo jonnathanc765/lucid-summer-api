@@ -82,6 +82,45 @@ RSpec.describe "Categories", type: :request do
         end
         
     end
-    
+
+    describe "DELETE /products/:id" do
+
+        describe "it deletes a category" do
+
+            let!(:category) { create(:category) }
+
+            it "destroy category" do
+                delete "/categories/#{category.id}"
+                expect(response).to have_http_status(200)
+                expect(payload).to_not be_empty 
+                expect(Category.count).to eq(0)
+            end
+            
+        end
+        
+        
+        describe "it set on null category_id field to products when a category is deleted" do
+            let!(:category) { create(:category) }
+            let!(:product) { create(:product) }
+
+            it "destroy category and set null category_id on null" do
+            
+                product.category = category 
+                product.save 
+
+                expect(product.reload.category).to_not be_nil  
+
+                delete "/categories/#{category.id}"
+
+                expect(response).to have_http_status(200)
+                expect(payload).to_not be_empty 
+                expect(product.reload.category).to be_nil 
+
+                
+            end
+            
+        end
+
+    end
     
 end
