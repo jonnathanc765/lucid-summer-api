@@ -1,32 +1,34 @@
 require 'rails_helper'
 
 RSpec.describe "Categories", type: :request do
-
+    
+    let(:user) { create(:user) }
+    sign_in(:user)
+    
     describe "GET /categories request" do
 
-        
         describe "witout data in DB" do
             
             it "it return a success code for categories list" do 
                 get "/categories"
+                expect(response).to have_http_status(:ok)
                 expect(payload.size).to eq(0)
                 expect(payload).to be_empty 
-                expect(response).to have_http_status(200)
                 
             end
 
         end
         
         describe "with data in DB" do
-            
+
             let!(:categories) { create_list(:category, 5) }
     
             it "it return a list of caegories" do 
                 get "/categories"
                 
+                expect(response).to have_http_status(:ok)
                 expect(payload.size).to eq(5)
                 expect(payload).to_not be_empty 
-                expect(response).to have_http_status(:ok)
             end
 
         end
