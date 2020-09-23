@@ -12,5 +12,9 @@ class ApplicationController < ActionController::API
   rescue_from ActiveRecord::RecordNotFound do |e|
     render json: {error: e.message}, status: 404
   end
+
+  rescue_from CanCan::AccessDenied do |exception|
+    render json: {"message" => "unauthorized"}.to_json, :status => 403
+  end
   
 end

@@ -2,6 +2,13 @@ require 'rails_helper'
 
 RSpec.describe "Products", type: :request do
 
+    let(:user) do
+        u = create(:user)
+        u.add_role "super-admin"
+        u 
+    end
+    sign_in(:user)
+
     describe "GET /products" do
         before { get '/products' }
 
@@ -14,7 +21,7 @@ RSpec.describe "Products", type: :request do
 
         describe "with data in DB" do
 
-            let!(:products) { create_list(:product, 10) }
+            let!(:products) { create_list(:product, 9) }
             
             it "should return a complete list of products" do
                 get "/products"

@@ -2,7 +2,12 @@ require 'rails_helper'
 
 RSpec.describe "Categories", type: :request do
     
-    let(:user) { create(:user) }
+    let(:user) do
+        u = create(:user)
+        u.add_role "super-admin"
+        u 
+    end 
+    
     sign_in(:user)
     
     describe "GET /categories request" do
@@ -40,6 +45,8 @@ RSpec.describe "Categories", type: :request do
         describe "create a category with correct data" do
 
             it 'save correctly' do
+
+                # user.add_role "super-admin"
                 
                 req_payload = {name: "Herb", description: "Some herbs", color: '#4F5897'}
                 post "/categories", params: req_payload

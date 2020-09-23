@@ -23,6 +23,8 @@ gem 'figaro'
 gem "aws-sdk-s3", require: false
 # Roles managment gem
 gem "rolify"
+# Permissions managment
+gem 'cancancan'
 
 # Use Active Storage variant
 # gem 'image_processing', '~> 1.2'
