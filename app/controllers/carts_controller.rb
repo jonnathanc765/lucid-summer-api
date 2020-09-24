@@ -2,17 +2,8 @@ class CartsController < ApplicationController
 
 
     def show 
-
-        if (current_user.cart)
-            @cart = current_user.cart
-        else
-            @cart = Cart.new
-            @cart.user = current_user
-            @cart.save
-        end
-
-        render json: @cart, status: :ok
-
+        @cart = Cart.first_or_create user_id: current_user.id
+        render json: @cart, include: [:cart_lines], status: :ok
     end
 
 end

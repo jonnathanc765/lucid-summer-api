@@ -6,9 +6,9 @@ Rails.application.routes.draw do
   resources :users, only: [:index, :show, :create, :update]
   resources :categories, only: [:index, :create, :update, :destroy]
   resources :products, only: [:index, :show, :create, :update, :destroy]
-  resources :carts, only: [:show]
-
-
+  
+  
   # Custom routes 
   get '/health', to: 'health#health'
+  get "/cart", to: 'carts#show'
 end
