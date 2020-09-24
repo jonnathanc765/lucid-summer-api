@@ -6,9 +6,16 @@ Please read this file for the correct deployment for this project
 
 Run the commands: 
 
-`` bundle install
-`` rails s
+`` bundle install ``
+`` rails s ``
 
 
 Add here the rake task necessary for the correct funcionality of the project:
+
+# Develop
+
+### Permissions
+
+To create permissions for each role, you must modify the file `app/models/ability.rb` and add your permission
+
 
