@@ -14,6 +14,12 @@ class Ability
       if user.has_role? "super-admin"
         can :manage, :all
       end
+
+      if user.has_role? "client"
+        can :manage, Cart 
+        can :manage, CartLine
+      end
+
     end
 
   end
