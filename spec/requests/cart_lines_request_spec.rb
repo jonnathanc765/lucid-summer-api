@@ -63,6 +63,27 @@ RSpec.describe "CartLines", type: :request do
         
         
     end
+
+    describe "with a existing cart" do 
+        let(:cart) do 
+            cart = Cart.create(user_id: User.first.id)
+            cart 
+        end
+        before do
+            cart.cart_lines.create(quantity: 2, product_id: product[0].id)
+        end
+        
+        describe "Deleting" do 
+            it "users can delete a product for a cart" do 
+                cart_line = CartLine.first
+                delete "/cart_lines/#{cart_line.id}"
+                expect(reponse).to have_http_status(:ok)
+                expect(payload).to_not be_empty
+                expect(CartLine.all.count).to eq(0)
+            end
+        end
+    end
+
     
 
 end
