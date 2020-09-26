@@ -8,8 +8,6 @@ class ProductsController < ApplicationController
   end
 
   def show
-    @product = Product.find(params[:id])
-
     render json: @product, status: :ok
   end
 
@@ -19,19 +17,21 @@ class ProductsController < ApplicationController
   end
 
   def update
-    @product = Product.find(params[:id])
     @product.update!(product_params)
     render json: @product, status: :ok
   end
 
   def destroy
-    p = Product.find(params[:id])
-    p.destroy
+    @product.destroy
     render json: {message: "Record deleted"}, status: :ok
   end
 
   private
     def product_params
       params.permit(:name, :retail_price, :wholesale_price, :promotion_price, :approximate_weight_per_piece, :category_id)
+    end
+
+    def set_product
+      @product = Product.find(params[:id])
     end
 end

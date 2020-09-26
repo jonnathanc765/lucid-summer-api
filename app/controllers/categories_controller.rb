@@ -13,19 +13,21 @@ class CategoriesController < ApplicationController
   end
 
   def update
-    @category = Category.find(params[:id])
     @category.update!(category_params)
     render json: @category, status: :ok
   end
 
   def destroy
-    c = Category.find(params[:id])
-    c.destroy
+    @category.destroy
     render json: {message: "Record deleted"}, status: 200
   end
 
   private
     def category_params
       params.permit(:name, :description, :color)
+    end
+
+    def set_category
+      @category = Category.find(params[:id])
     end
 end
