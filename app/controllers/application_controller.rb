@@ -6,7 +6,7 @@ class ApplicationController < ActionController::API
   end
 
   rescue_from ActiveRecord::RecordInvalid do |e|
-      render json: {error: e.message}, status: :unprocessable_entity
+    render json: {error: e.message}, status: :unprocessable_entity
   end
 
   rescue_from ActiveRecord::RecordNotFound do |e|
@@ -16,5 +16,4 @@ class ApplicationController < ActionController::API
   rescue_from CanCan::AccessDenied do |exception|
     render json: {"message" => "unauthorized"}.to_json, :status => 403
   end
-  
 end

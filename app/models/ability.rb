@@ -4,7 +4,6 @@ class Ability
   include CanCan::Ability
 
   def initialize(user)
-
     user ||= User.new # guest user (not logged in)
 
     can :read, Product
@@ -16,11 +15,9 @@ class Ability
       end
 
       if user.has_role? "client"
-        can :manage, Cart 
+        can :manage, Cart
         can :manage, CartLine
       end
-
     end
-
   end
 end
