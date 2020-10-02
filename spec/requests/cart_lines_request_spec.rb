@@ -19,7 +19,8 @@ RSpec.describe "CartLines", type: :request do
         cart_lines: [
           {
             product_id: products[0].id,
-            quantity: 2
+            quantity: 2,
+            unit_type: 'Kg'
           },
           {
             product_id: products[1].id,
