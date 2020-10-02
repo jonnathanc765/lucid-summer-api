@@ -57,6 +57,46 @@ RSpec.describe "Categories", type: :request do
         expect(payload["error"]).to_not be_empty
       end
     end
+
+    describe "Permissions" do 
+      it "Employee can't create categories" do
+        user.remove_role "super-admin"
+        user.add_role "employee"
+
+        req_payload = {name: "Herb", description: "Some herbs", color: '#4F5897'}
+        post "/categories", params: req_payload
+        expect(response).to have_http_status(:forbidden)
+        expect(Category.all.size).to eq(0)
+
+      end
+      it "dispatcher can't create categories" do
+        user.remove_role "super-admin"
+        user.add_role "dispatcher"
+
+        req_payload = {name: "Herb", description: "Some herbs", color: '#4F5897'}
+        post "/categories", params: req_payload
+        expect(response).to have_http_status(:forbidden)
+        expect(Category.all.size).to eq(0)
+      end
+      it "Delivery man can't create categories" do
+        user.remove_role "super-admin"
+        user.add_role "delivery-man"
+
+        req_payload = {name: "Herb", description: "Some herbs", color: '#4F5897'}
+        post "/categories", params: req_payload
+        expect(response).to have_http_status(:forbidden)
+        expect(Category.all.size).to eq(0)
+      end
+      it "client can create category" do
+        user.remove_role "super-admin"
+        user.add_role "client"
+
+        req_payload = {name: "Herb", description: "Some herbs", color: '#4F5897'}
+        post "/categories", params: req_payload
+        expect(response).to have_http_status(:forbidden)
+        expect(Category.all.size).to eq(0)
+      end
+    end
   end
 
   describe "PUT  /categories/{id}" do

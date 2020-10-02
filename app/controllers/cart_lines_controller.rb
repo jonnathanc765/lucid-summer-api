@@ -6,6 +6,7 @@ class CartLinesController < ApplicationController
     @cart = Cart.first_or_create user_id: current_user.id
 
     params[:cart_lines].each do |line|
+      
       cart_line = @cart.cart_lines.find_or_create_by product_id: line[:product_id]
       cart_line_quantity = cart_line.quantity
       request_quantity = line[:quantity].to_i
