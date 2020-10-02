@@ -1,135 +1,232 @@
 require 'rails_helper'
 
 RSpec.describe "Categories", type: :request do
-    
-    let(:user) do
-        u = create(:user)
-        u.add_role "super-admin"
-        u 
-    end 
-    
-    sign_in(:user)
-    
-    describe "GET /categories request" do
+  let(:user) do
+    u = create(:user)
+    u.add_role "super-admin"
+    u
+  end
 
-        describe "witout data in DB" do
-            
-            it "it return a success code for categories list" do 
-                get "/categories"
-                expect(response).to have_http_status(:ok)
-                expect(payload.size).to eq(0)
-                expect(payload).to be_empty 
-                
-            end
+  sign_in(:user)
 
-        end
-        
-        describe "with data in DB" do
-
-            let!(:categories) { create_list(:category, 5) }
-    
-            it "it return a list of caegories" do 
-                get "/categories"
-                
-                expect(response).to have_http_status(:ok)
-                expect(payload.size).to eq(5)
-                expect(payload).to_not be_empty 
-            end
-
-        end
-
+  describe "GET /categories request" do
+    describe "witout data in DB" do
+      it "it return a success code for categories list" do
+        get "/categories"
+        expect(response).to have_http_status(:ok)
+        expect(payload.size).to eq(0)
+        expect(payload).to be_empty
+      end
     end
 
-    describe "POST /categories" do
+    describe "with data in DB" do
+      let!(:categories) { create_list(:category, 5) }
 
-        describe "create a category with correct data" do
+      it "it return a list of caegories" do
+        get "/categories"
 
-            it 'save correctly' do
+        expect(response).to have_http_status(:ok)
+        expect(payload.size).to eq(5)
+        expect(payload).to_not be_empty
+      end
+    end
+  end
 
-                # user.add_role "super-admin"
-                
-                req_payload = {name: "Herb", description: "Some herbs", color: '#4F5897'}
-                post "/categories", params: req_payload
-                expect(response).to have_http_status(:created)
-                expect(payload["id"]).to_not be_nil
-                expect(payload["name"]).to eq("Herb")
-                expect(payload["description"]).to eq("Some herbs")
-                expect(payload["color"]).to eq("#4F5897")
+  describe "POST /categories" do
+    describe "create a category with correct data" do
+      it 'save correctly' do
+        # user.add_role "super-admin"
 
-            end
-
-        end
-        
-        describe "without correctly data" do
-            it "dont save the wrong data" do
-                req_payload = {name: "", description: "Some herbs"}
-                post "/categories", params: req_payload
-                expect(response).to have_http_status(422)
-                
-                expect(payload["id"]).to be_nil
-                expect(payload["error"]).to_not be_empty
-            end
-        end
+        req_payload = {name: "Herb", description: "Some herbs", color: '#4F5897'}
+        post "/categories", params: req_payload
+        expect(response).to have_http_status(:created)
+        expect(payload["id"]).to_not be_nil
+        expect(payload["name"]).to eq("Herb")
+        expect(payload["description"]).to eq("Some herbs")
+        expect(payload["color"]).to eq("#4F5897")
+      end
     end
 
-    describe "PUT  /categories/{id}" do
+    describe "without correctly data" do
+      it "dont save the wrong data" do
+        req_payload = {name: "", description: "Some herbs"}
+        post "/categories", params: req_payload
+        expect(response).to have_http_status(422)
 
-        let!(:category) { create(:category) }
-
-        it "it update a existing category" do
-
-            req_payload = {name: "Herb", description: "Some herbs", color: '#4F5897'}
-            put "/categories/#{category.id}", params: req_payload 
-
-            expect(response).to have_http_status(:ok)
-            expect(payload["id"]).to_not be_nil 
-            expect(payload["id"]).to eq(category.id)
-            expect(payload["name"]).to eq("Herb")
-            expect(payload["description"]).to eq("Some herbs")
-            expect(payload["color"]).to eq("#4F5897") 
-            
-        end
-        
+        expect(payload["id"]).to be_nil
+        expect(payload["error"]).to_not be_empty
+      end
     end
 
-    describe "DELETE /products/:id" do
+    describe "Permissions" do 
+      it "Super admin can create categories" do
 
-        describe "it deletes a category" do
+        req_payload = {name: "Herb", description: "Some herbs", color: '#4F5897'}
+        post "/categories", params: req_payload
+        expect(response).to have_http_status(:created)
+        expect(Category.all.size).to eq(1)
 
-            let!(:category) { create(:category) }
+      end
 
-            it "destroy category" do
-                delete "/categories/#{category.id}"
-                expect(response).to have_http_status(200)
-                expect(payload).to_not be_empty 
-                expect(Category.count).to eq(0)
-            end
-            
-        end
-        
-        
-        describe "it set on null category_id field to products when a category is deleted" do
-            let!(:category) { create(:category) }
-            let!(:product) { create(:product) }
+      it "Super admin can create categories" do
 
-            it "destroy category and set null category_id on null" do
-            
-                product.category = category 
-                product.save 
+        req_payload = {name: "Herb", description: "Some herbs", color: '#4F5897'}
+        post "/categories", params: req_payload
+        expect(response).to have_http_status(:created)
+        expect(Category.all.size).to eq(1)
 
-                expect(product.reload.category).to_not be_nil  
+      end
 
-                delete "/categories/#{category.id}"
+      it "Employee can't create categories" do
+        user.remove_role "super-admin"
+        user.add_role "employee"
 
-                expect(response).to have_http_status(200)
-                expect(payload).to_not be_empty 
-                expect(product.reload.category).to be_nil 
+        req_payload = {name: "Herb", description: "Some herbs", color: '#4F5897'}
+        post "/categories", params: req_payload
+        expect(response).to have_http_status(:forbidden)
+        expect(Category.all.size).to eq(0)
 
-                
-            end
-            
-        end
+      end
+      it "dispatcher can't create categories" do
+        user.remove_role "super-admin"
+        user.add_role "dispatcher"
 
+        req_payload = {name: "Herb", description: "Some herbs", color: '#4F5897'}
+        post "/categories", params: req_payload
+        expect(response).to have_http_status(:forbidden)
+        expect(Category.all.size).to eq(0)
+      end
+      it "Delivery man can't create categories" do
+        user.remove_role "super-admin"
+        user.add_role "delivery-man"
+
+        req_payload = {name: "Herb", description: "Some herbs", color: '#4F5897'}
+        post "/categories", params: req_payload
+        expect(response).to have_http_status(:forbidden)
+        expect(Category.all.size).to eq(0)
+      end
+      it "client can create category" do
+        user.remove_role "super-admin"
+        user.add_role "client"
+
+        req_payload = {name: "Herb", description: "Some herbs", color: '#4F5897'}
+        post "/categories", params: req_payload
+        expect(response).to have_http_status(:forbidden)
+        expect(Category.all.size).to eq(0)
+      end
     end
-    
+  end
+
+  describe "PUT  /categories/{id}" do
+    let!(:category) { create(:category) }
+
+    it "it update a existing category" do
+      req_payload = {name: "Herb", description: "Some herbs", color: '#4F5897'}
+      put "/categories/#{category.id}", params: req_payload
+
+      expect(response).to have_http_status(:ok)
+      expect(payload["id"]).to_not be_nil
+      expect(payload["id"]).to eq(category.id)
+      expect(payload["name"]).to eq("Herb")
+      expect(payload["description"]).to eq("Some herbs")
+      expect(payload["color"]).to eq("#4F5897")
+    end
+
+    describe "Permissions" do 
+      it "Super admin can update categories" do
+        req_payload = {name: "Herb", description: "Some herbs", color: '#4F5897'}
+        put "/categories/#{category.id}", params: req_payload
+        expect(response).to have_http_status(:ok)
+        expect(Category.all.size).to eq(1)
+        fresh_category = Category.first
+        expect(fresh_category.id).to eq(category.id)
+        expect(fresh_category.name).to eq("Herb")
+        expect(fresh_category.description).to eq("Some herbs")
+
+      end
+
+      it "Super admin can update categories" do
+
+        req_payload = {name: "Herb", description: "Some herbs", color: '#4F5897'}
+        put "/categories/#{category.id}", params: req_payload
+        expect(response).to have_http_status(:ok)
+        expect(Category.all.size).to eq(1)
+        fresh_category = Category.first
+        expect(fresh_category.id).to eq(category.id)
+        expect(fresh_category.name).to eq("Herb")
+        expect(fresh_category.description).to eq("Some herbs")
+
+      end
+
+      it "Employee can't update categories" do
+        user.remove_role "super-admin"
+        user.add_role "employee"
+        
+        req_payload = {name: "Herb", description: "Some herbs", color: '#4F5897'}
+        put "/categories/#{category.id}", params: req_payload
+        expect(response).to have_http_status(:forbidden)
+        expect(Category.all.size).to eq(1)
+
+      end
+      it "dispatcher can't update categories" do
+        user.remove_role "super-admin"
+        user.add_role "dispatcher"
+
+        req_payload = {name: "Herb", description: "Some herbs", color: '#4F5897'}
+        put "/categories/#{category.id}", params: req_payload
+        expect(response).to have_http_status(:forbidden)
+        expect(Category.all.size).to eq(1)
+      end
+      it "Delivery man can't update categories" do
+        user.remove_role "super-admin"
+        user.add_role "delivery-man"
+
+        req_payload = {name: "Herb", description: "Some herbs", color: '#4F5897'}
+        put "/categories/#{category.id}", params: req_payload
+        expect(response).to have_http_status(:forbidden)
+        expect(Category.all.size).to eq(1)
+      end
+      it "client can't update category" do
+        user.remove_role "super-admin"
+        user.add_role "client"
+
+        req_payload = {name: "Herb", description: "Some herbs", color: '#4F5897'}
+        put "/categories/#{category.id}", params: req_payload
+        expect(response).to have_http_status(:forbidden)
+        expect(Category.all.size).to eq(1)
+      end
+    end
+
+  end
+
+  describe "DELETE /products/:id" do
+    describe "it deletes a category" do
+      let!(:category) { create(:category) }
+
+      it "destroy category" do
+        delete "/categories/#{category.id}"
+        expect(response).to have_http_status(200)
+        expect(payload).to_not be_empty
+        expect(Category.count).to eq(0)
+      end
+    end
+
+    describe "it set on null category_id field to products when a category is deleted" do
+      let!(:category) { create(:category) }
+      let!(:product) { create(:product) }
+
+      it "destroy category and set null category_id on null" do
+        product.category = category
+        product.save
+
+        expect(product.reload.category).to_not be_nil
+
+        delete "/categories/#{category.id}"
+
+        expect(response).to have_http_status(200)
+        expect(payload).to_not be_empty
+        expect(product.reload.category).to be_nil
+      end
+    end
+  end
 end
