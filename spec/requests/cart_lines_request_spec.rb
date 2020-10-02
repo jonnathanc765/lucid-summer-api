@@ -30,7 +30,7 @@ RSpec.describe "CartLines", type: :request do
 
       post "/cart_lines", params: req_payload
 
-      expect(response).to have_http_status(:ok)
+      expect(response).to have_http_status(:created)
       expect(payload).to_not be_empty
       expect(payload[0]["product_id"]).to eq(products[0]["id"])
       expect(payload[1]["product_id"]).to eq(products[1]["id"])
@@ -54,7 +54,7 @@ RSpec.describe "CartLines", type: :request do
 
       post "/cart_lines", params: req_payload
 
-      expect(response).to have_http_status(:ok)
+      expect(response).to have_http_status(:created)
       expect(payload).to_not be_empty
       expect(payload[0]["product_id"]).to eq(products[0]["id"])
       expect(payload[1]["product_id"]).to eq(products[1]["id"])
@@ -82,5 +82,19 @@ RSpec.describe "CartLines", type: :request do
         expect(CartLine.first.id).to eq(2)
       end
     end
+
+    it "if line quantity is set 0, line is deleted" do 
+      req_payload = {
+        cart_lines: [
+          { product_id: products[0].id , quantity: 0 }
+        ]
+      }
+      post "/cart_lines", params: req_payload 
+      expect(response).to have_http_status(:created)
+      expect(cart.cart_lines.size).to eq(1)
+      expect(cart.cart_lines.first.product_id).to eq(products[1].id)
+    end
+
+
   end
 end

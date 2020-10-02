@@ -11,10 +11,15 @@ class CartLinesController < ApplicationController
       cart_line_quantity = cart_line.quantity
       request_quantity = line[:quantity].to_i
 
-      cart_line.update! quantity: cart_line_quantity.nil? ? request_quantity : cart_line_quantity + request_quantity
+      if request_quantity == 0
+        cart_line.destroy 
+      else
+        cart_line.update! quantity: cart_line_quantity.nil? ? request_quantity : cart_line_quantity + request_quantity
+      end
+      
     end
 
-    render json: @cart.cart_lines, status: :ok
+    render json: @cart.cart_lines, status: :created
   end
 
   def destroy
