@@ -94,7 +94,6 @@ RSpec.describe "CartLines", type: :request do
       expect(cart.cart_lines.size).to eq(1)
       expect(cart.cart_lines.first.product_id).to eq(products[1].id)
     end
-
-
+    
   end
 end
