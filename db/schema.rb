@@ -54,7 +54,7 @@ ActiveRecord::Schema.define(version: 2020_09_23_153746) do
     t.string "name"
     t.string "description"
     t.string "color"
-    t.bigint "parent_id"
+    t.bigint "parent_category"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end

@@ -58,6 +58,33 @@ RSpec.describe "Categories", type: :request do
       end
     end
 
+    describe "parent category" do 
+      let(:parent_category) { create(:category) }
+      it 'can create a category with parent category' do
+
+        parent_category = create(:category)
+
+        req_payload = {name: "Child category", description: "Some herbs", parent_category: parent_category.id}
+
+        post "/categories", params: req_payload
+        expect(response).to have_http_status(:created)
+        expect(payload).to_not be_empty 
+        expect(payload["parent_category"]['id']).to eq(parent_category.id)
+        expect(Category.all.size).to eq(2)      
+
+      end
+
+      it 'parent category must exist' do
+        
+        req_payload = {name: "Child category", description: "Some herbs", parent_category: 8574}
+
+        post "/categories", params: req_payload
+
+        expect(response).to have_http_status(:unprocessable_entity)
+      end
+
+    end
+
     describe "Permissions" do 
       it "Super admin can create categories" do
 
@@ -132,6 +159,16 @@ RSpec.describe "Categories", type: :request do
       expect(payload["color"]).to eq("#4F5897")
     end
 
+    describe 'parent_category' do
+      it 'parent category cant be itself' do
+        c = create(:category)
+        req_payload = {name: "Herb v2", description: "Some herbs v2", color: '#000000', parent_category: c.id}
+        put "/categories/#{c.id}", params: req_payload
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(payload["id"]).to be_nil
+      end
+    end
+
     describe "Permissions" do 
       it "Super admin can update categories" do
         req_payload = {name: "Herb", description: "Some herbs", color: '#4F5897'}
@@ -199,7 +236,7 @@ RSpec.describe "Categories", type: :request do
 
   end
 
-  describe "DELETE /products/:id" do
+  describe "DELETE /products/:id ~>" do
     describe "it deletes a category" do
       let!(:category) { create(:category) }
 
@@ -228,5 +265,8 @@ RSpec.describe "Categories", type: :request do
         expect(product.reload.category).to be_nil
       end
     end
+
+    
+
   end
 end
