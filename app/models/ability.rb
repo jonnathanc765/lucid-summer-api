@@ -11,7 +11,7 @@ class Ability
 
     if user.present?
 
-      can :manage, Address
+      can :manage, Address, user_id: user.id
 
       if user.has_role? "super-admin"
         can :manage, :all

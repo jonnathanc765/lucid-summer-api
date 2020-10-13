@@ -45,7 +45,7 @@ class CategoriesController < ApplicationController
 
   def destroy
     @category.destroy
-    render json: {message: "Record deleted"}, status: 200
+    render json: {message: "Record deleted"}, status: :ok
   end
 
   private
