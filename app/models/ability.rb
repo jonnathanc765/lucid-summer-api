@@ -10,6 +10,9 @@ class Ability
     can :read, Category
 
     if user.present?
+
+      can :manage, Address, user_id: user.id
+
       if user.has_role? "super-admin"
         can :manage, :all
       end
