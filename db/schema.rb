@@ -54,9 +54,10 @@ ActiveRecord::Schema.define(version: 2020_09_23_153746) do
     t.string "name"
     t.string "description"
     t.string "color"
-    t.bigint "parent_category"
+    t.integer "parent_category_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["parent_category_id"], name: "index_categories_on_parent_category_id"
   end
 
   create_table "products", force: :cascade do |t|
