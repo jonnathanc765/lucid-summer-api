@@ -5,6 +5,7 @@ RSpec.describe Order, type: :model do
     it "should validate all fields" do
       should validate_presence_of(:user_id)
       should validate_presence_of(:address)
+      should validate_presence_of(:city)
       should validate_presence_of(:state)
       should validate_presence_of(:country)
     end

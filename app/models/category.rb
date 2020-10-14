@@ -3,6 +3,14 @@ class Category < ApplicationRecord
   has_many :products, dependent: :nullify
   belongs_to :parent_category, class_name: "Category", foreign_key: "parent_category_id", optional: true
 
+
+  def default_values
+    self.color ||= '#FFFFFF'
+  end
+
+  
+
+  validates :name, presence: true
   validates(
     :parent_category,
     presence: true,
@@ -16,10 +24,4 @@ class Category < ApplicationRecord
     on: :update,
     if: :parent_category_id?
   )
-
-  def default_values
-    self.color ||= '#FFFFFF'
-  end
-
-  validates :name, presence: true
 end

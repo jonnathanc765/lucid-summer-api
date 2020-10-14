@@ -88,6 +88,7 @@ ActiveRecord::Schema.define(version: 2020_10_13_184123) do
   create_table "orders", force: :cascade do |t|
     t.integer "user_id", null: false
     t.string "address"
+    t.string "city"
     t.string "state"
     t.string "country"
     t.integer "status"

@@ -20,6 +20,7 @@ class Ability
       if user.has_role? "client"
         can :manage, Cart
         can :manage, CartLine
+        can :manage, Order, user_id: user.id
       end
     end
   end
