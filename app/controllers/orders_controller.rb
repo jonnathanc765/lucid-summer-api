@@ -14,6 +14,10 @@ class OrdersController < ApplicationController
 
         address = Address.find_by(id: order_params.to_i)
 
+        if address.nil?
+            return render json: {message: 'Address must exists'}, status: :unprocessable_entity
+        end
+
         if address.user_id != current_user.id
             return render json: {message: 'Current user is not the owner of this address'}, status: :unprocessable_entity
         end

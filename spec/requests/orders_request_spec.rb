@@ -131,6 +131,20 @@ RSpec.describe "Orders ~>", type: :request do
         expect(OrderLine.all.size).to eq(0)
 
       end 
+
+      it 'address must exists' do
+
+        cart = create_cart user
+
+        address = create(:address, user_id: user.id)
+
+        post "/orders", params: {address_id: 422}
+
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(Order.all.size).to eq(0)
+        expect(OrderLine.all.size).to eq(0)
+
+      end 
     end
   end
 end
