@@ -10,6 +10,13 @@ RSpec.describe "Orders ~>", type: :request do
         expect(response).to have_http_status(401)
         
       end
+
+      it 'users must be logged in for generate orders' do
+
+        post "/orders"
+        expect(response).to have_http_status(401)
+        
+      end
     end
 
     
@@ -79,10 +86,35 @@ RSpec.describe "Orders ~>", type: :request do
 
         expect(response).to have_http_status(:created)
         expect(payload).to_not be_empty
-        expect(payload['order_lines'].size).to eq(2)
+        expect(payload["status"]).to eq(0)
+        expect(payload["address"]).to eq(address.address)
+        expect(payload['order_lines'].size).to eq(10)
         expect(CartLine.all.size).to eq(0)
 
-      end      
+      end 
+      it 'address is required for generate a order' do
+
+        cart = create_cart user
+
+        address = create(:address, user_id: user.id)
+
+        post "/orders"
+
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(Order.all.size).to eq(0)
+      end   
+      it 'must exists cart lines of current user' do
+
+        cart = create_cart user, false
+
+        address = create(:address, user_id: user.id)
+
+        post "/orders", params: {address_id: address.id}
+
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(Order.all.size).to eq(0)
+
+      end 
     end
   end
 end
@@ -92,9 +124,10 @@ def create_cart(user, with_lines = true)
   cart = Cart.create(user_id: user.id)
   
   if with_lines 
-    products = create_list(:product, 2)
-    cart.cart_lines.create(product_id: products[0]['id'], quantity: 2)
-    cart.cart_lines.create(product_id: products[1]['id'], quantity: 1)
+    products = create_list(:product, 10)
+    products.each do |p|
+      cart.cart_lines.create(product_id: p['id'], quantity: 2)
+    end
   end
   
   cart
