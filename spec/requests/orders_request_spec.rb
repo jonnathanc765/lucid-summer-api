@@ -25,8 +25,9 @@ RSpec.describe "Orders ~>", type: :request do
   describe 'Logged in users ~>' do
 
     let(:user) do 
-      user = create(:user)
+      user = create(:user, first_name: "Client User")
       user.add_role 'client'
+      user.save
       user 
     end
 
@@ -113,6 +114,21 @@ RSpec.describe "Orders ~>", type: :request do
 
         expect(response).to have_http_status(:unprocessable_entity)
         expect(Order.all.size).to eq(0)
+
+      end 
+      it 'current user must be owner of id address sent it' do
+
+        cart = create_cart user
+
+        addresses = create_list(:address, 4)
+
+        address = create(:address, user_id: user.id)
+
+        post "/orders", params: {address_id: addresses[2].id}
+
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(Order.all.size).to eq(0)
+        expect(OrderLine.all.size).to eq(0)
 
       end 
     end

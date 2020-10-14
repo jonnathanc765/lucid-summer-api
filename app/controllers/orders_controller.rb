@@ -13,7 +13,11 @@ class OrdersController < ApplicationController
     def create
 
         address = Address.find_by(id: order_params.to_i)
-        
+
+        if address.user_id != current_user.id
+            return render json: {message: 'Current user is not the owner of this address'}, status: :unprocessable_entity
+        end
+
         cart = current_user.cart
 
         if cart.cart_lines.empty?
