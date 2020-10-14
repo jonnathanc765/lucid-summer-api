@@ -146,6 +146,22 @@ RSpec.describe "Orders ~>", type: :request do
 
       end 
     end
+
+    describe 'GET /orders/:id ~>' do
+      it 'does something' do
+
+        order = create_order user
+
+        binding.pry
+
+        get "/orders/#{order.id}"
+
+        expect(response).to have_http_status(:ok)
+        expect(payload).to_not be_empty
+        expect(payload['order_lines'].size).to eq(10)
+        
+      end      
+    end
   end
 end
 
@@ -161,4 +177,18 @@ def create_cart(user, with_lines = true)
   end
   
   cart
+end
+
+def create_order(user, with_lines = true)
+  
+  order = create(:order, user_id: user.id)
+  
+  if with_lines 
+    products = create_list(:product, 10)
+    products.each do |p|
+      order.order_lines.create(product_id: p['id'], quantity: 2, price: p['retail_price'])
+    end
+  end
+  
+  order
 end

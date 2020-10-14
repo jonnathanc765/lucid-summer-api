@@ -8,7 +8,7 @@ Rails.application.routes.draw do
   resources :products, only: [:index, :show, :create, :update, :destroy]
   resources :cart_lines, only: [:create, :destroy]
   resources :addresses, only: [:index, :create, :update, :destroy, :show]
-  resources :orders, only: [:index, :create]
+  resources :orders, only: [:index, :create, :show]
 
 
   # Custom routes

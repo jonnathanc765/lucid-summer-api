@@ -1,5 +1,5 @@
 class OrdersController < ApplicationController
-    before_action :authenticate_user!
+    before_action :authenticate_user!, :set_order, only: [:show]
     
     def index 
         if current_user.has_role? "admin" or current_user.has_role? "super-admin"
@@ -41,9 +41,19 @@ class OrdersController < ApplicationController
         render json: order, include: [:order_lines], status: :created
     end
 
+    def show
+        binding.pry
+        render json: @order, include: [:order_lines], status: :ok
+    end
+
+
     private
         def order_params
             params.require(:address_id)
+        end
+
+        def set_order 
+            @order = Order.find(params[:id])
         end
             
 

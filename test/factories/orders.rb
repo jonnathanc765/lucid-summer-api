@@ -5,6 +5,7 @@ FactoryBot.define do
     state { Faker::Address.state }
     country { Faker::Address.country }
     status { Faker::Number.digit }
+    unit { "Unit" }
     user
   end
 end
