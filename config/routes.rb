@@ -8,6 +8,8 @@ Rails.application.routes.draw do
   resources :products, only: [:index, :show, :create, :update, :destroy]
   resources :cart_lines, only: [:create, :destroy]
   resources :orders, only: [:index]
+  resources :addresses, only: [:index, :create, :update, :destroy, :show]
+
 
   # Custom routes
   get '/health', to: 'health#health'

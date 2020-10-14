@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_02_222548) do
+ActiveRecord::Schema.define(version: 2020_10_13_184123) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -34,10 +34,11 @@ ActiveRecord::Schema.define(version: 2020_10_02_222548) do
   end
 
   create_table "addresses", force: :cascade do |t|
-    t.integer "user_id", null: false
-    t.string "address"
+    t.text "address"
+    t.string "city"
     t.string "state"
     t.string "country"
+    t.integer "user_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["user_id"], name: "index_addresses_on_user_id"
@@ -65,9 +66,10 @@ ActiveRecord::Schema.define(version: 2020_10_02_222548) do
     t.string "name"
     t.string "description"
     t.string "color"
-    t.bigint "parent_id"
+    t.integer "parent_category_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
+    t.index ["parent_category_id"], name: "index_categories_on_parent_category_id"
   end
 
   create_table "order_lines", force: :cascade do |t|

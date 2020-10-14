@@ -4,7 +4,7 @@ class CreateCategories < ActiveRecord::Migration[6.0]
       t.string :name
       t.string :description
       t.string :color
-      t.bigint :parent_id
+      t.references :parent_category
 
       t.timestamps
     end
