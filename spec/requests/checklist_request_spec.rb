@@ -12,13 +12,14 @@ RSpec.describe "Checklists", type: :request do
   describe 'logged in users' do
     it 'Employee can check a product single product' do
 
-        order = create_order user.id 
-        
-        line = order.order_lines[0]
+      order = create_order user
+      line = order.order_lines[0]
+      post "/checklist/#{line.id}"
 
-        post "/checklist/#{line.id}"
+      line.reload
 
-      
+      expect(response).to have_http_status(:ok)
+      expect(line.check).to eq(true)
           
     end
   end

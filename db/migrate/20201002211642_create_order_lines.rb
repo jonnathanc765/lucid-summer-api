@@ -6,7 +6,7 @@ class CreateOrderLines < ActiveRecord::Migration[6.0]
       t.integer :quantity
       t.string :unit_type
       t.float :price
-      t.boolean :check, default: true
+      t.boolean :check, default: false
 
       t.timestamps
     end

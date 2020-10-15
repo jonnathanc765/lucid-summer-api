@@ -16,4 +16,8 @@ RSpec.describe Order, type: :model do
       should have_many(:order_lines)
     end
   end
+  it 'have enum status' do
+    should define_enum_for(:status).
+      with_values([:pending, :on_process, :to_deliver, :in_transit, :delivered, :rated])
+  end
 end

@@ -89,7 +89,4 @@ RSpec.configure do |config|
   # arbitrary gems may also be filtered via:
   # config.filter_gems_from_backtrace("gem name")
 
-
-  config.include ActionDispatch::TestProcess
-  config.include Rack::Test::Methods
 end
