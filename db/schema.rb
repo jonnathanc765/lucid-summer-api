@@ -78,7 +78,7 @@ ActiveRecord::Schema.define(version: 2020_10_13_184123) do
     t.integer "quantity"
     t.string "unit_type"
     t.float "price"
-    t.boolean "check"
+    t.boolean "check", default: true
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["order_id"], name: "index_order_lines_on_order_id"
