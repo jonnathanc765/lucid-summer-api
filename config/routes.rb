@@ -14,4 +14,7 @@ Rails.application.routes.draw do
   # Custom routes
   get '/health', to: 'health#health'
   get "/cart", to: 'carts#show'
+
+
+  post '/product_images/:id', to: 'product_images#create'
 end

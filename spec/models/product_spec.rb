@@ -6,6 +6,11 @@ RSpec.describe Product, type: :model do
       should validate_presence_of(:name)
       should validate_presence_of(:retail_price)
       should validate_presence_of(:wholesale_price)
+
     end
+  end
+  it 'relationships' do
+    should have_many_attached(:images)
+    should belong_to(:category).optional
   end
 end
