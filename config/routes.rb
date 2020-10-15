@@ -15,4 +15,5 @@ Rails.application.routes.draw do
   get '/health', to: 'health#health'
   get "/cart", to: 'carts#show'
   post '/checklist/:id', to: 'checklist#check'
+  post '/orders/:id/update_status', to: 'orders#update_status'
 end

@@ -87,7 +87,7 @@ RSpec.describe "Orders ~>", type: :request do
 
         expect(response).to have_http_status(:created)
         expect(payload).to_not be_empty
-        expect(payload["status"]).to eq(0)
+        expect(payload["status"]).to eq("pending")
         expect(payload["address"]).to eq(address.address)
         expect(payload['order_lines'].size).to eq(10)
         expect(CartLine.all.size).to eq(0)
@@ -159,6 +159,18 @@ RSpec.describe "Orders ~>", type: :request do
         expect(payload['order_lines'].size).to eq(10)
         
       end      
+    end
+
+    describe 'update orders ~>' do
+      it 'it updates order to on process' do
+        order = create_order user
+
+        post "/orders/#{order.id}/update_status", params: {status: "on_process"}
+
+        expect(response).to have_http_status(:ok)
+        expect(payload).to_not be_empty 
+        expect(payload['status']).to eq("on_process")
+      end
     end
   end
 end
