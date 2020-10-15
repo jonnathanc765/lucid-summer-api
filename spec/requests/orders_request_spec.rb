@@ -148,11 +148,9 @@ RSpec.describe "Orders ~>", type: :request do
     end
 
     describe 'GET /orders/:id ~>' do
-      it 'does something' do
+      it 'it retieve a order' do
 
         order = create_order user
-
-        binding.pry
 
         get "/orders/#{order.id}"
 
@@ -186,7 +184,7 @@ def create_order(user, with_lines = true)
   if with_lines 
     products = create_list(:product, 10)
     products.each do |p|
-      order.order_lines.create(product_id: p['id'], quantity: 2, price: p['retail_price'])
+      order.order_lines.create(product_id: p['id'], quantity: 2, price: p['retail_price'], unit_type: 'Unit')
     end
   end
   
