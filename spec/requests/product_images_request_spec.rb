@@ -17,9 +17,20 @@ RSpec.describe "ProductImages ~>", type: :request do
               post "/product_images/#{product.id}", params: req_payload
         
               expect(response).to have_http_status(:created)
-
               expect(product.images.size).to eq(1)
         
+            end
+
+            it 'product must exist' do
+
+              product = create(:product)
+
+              req_payload = {images: image}
+              
+              post "/product_images/343", params: req_payload
+        
+              expect(response).to have_http_status(:not_found)
+
             end
 
         end
