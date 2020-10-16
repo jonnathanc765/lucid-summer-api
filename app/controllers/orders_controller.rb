@@ -47,7 +47,12 @@ class OrdersController < ApplicationController
     end
 
     def update_status
-        @order.update! status: status_params[:status]
+
+        
+        if Order.statuses[@order.status] >= status_params[:status].to_i
+            return render json: {message: 'Status must be valid'}, status: :unprocessable_entity
+        end
+        @order.update! status: status_params[:status].to_i
         render json: @order, status: :ok
     end
 
