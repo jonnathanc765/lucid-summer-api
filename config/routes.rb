@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   resources :cart_lines, only: [:create, :destroy]
   resources :addresses, only: [:index, :create, :update, :destroy, :show]
   resources :orders, only: [:index, :create, :show]
+  resources :reviews, only: [:create, :show]
 
 
   # Custom routes
