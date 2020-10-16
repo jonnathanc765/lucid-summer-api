@@ -173,7 +173,7 @@ RSpec.describe "Orders ~>", type: :request do
       end
 
       it 'order must be pending for updates status on process' do
-        order = create_order user, 1
+        order = create_order user, true, 1
 
         post "/orders/#{order.id}/update_status", params: {status: "1"}
 
@@ -200,7 +200,6 @@ def create_cart(user, with_lines = true)
 end
 
 def create_order(user, with_lines = true, order_status = 0)
-  
   order = create(:order, user_id: user.id, status: order_status)
   
   if with_lines 

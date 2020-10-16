@@ -47,8 +47,9 @@ class OrdersController < ApplicationController
     end
 
     def update_status
-        binding.pry
-        if @order.status.to_i >= status_params[:status].to_i
+
+        
+        if Order.statuses[@order.status] >= status_params[:status].to_i
             return render json: {message: 'Status must be valid'}, status: :unprocessable_entity
         end
         @order.update! status: status_params[:status].to_i
