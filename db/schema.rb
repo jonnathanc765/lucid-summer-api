@@ -78,7 +78,7 @@ ActiveRecord::Schema.define(version: 2020_10_16_125939) do
     t.integer "quantity"
     t.string "unit_type"
     t.float "price"
-    t.boolean "check"
+    t.boolean "check", default: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["order_id"], name: "index_order_lines_on_order_id"
@@ -91,7 +91,7 @@ ActiveRecord::Schema.define(version: 2020_10_16_125939) do
     t.string "city"
     t.string "state"
     t.string "country"
-    t.integer "status"
+    t.integer "status", default: 0
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["user_id"], name: "index_orders_on_user_id"

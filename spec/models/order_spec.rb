@@ -17,4 +17,8 @@ RSpec.describe Order, type: :model do
     end
     it { should have_many(:reviews) }
   end
+  it 'have enum status' do
+    should define_enum_for(:status).
+      with_values([:pending, :on_process, :to_deliver, :in_transit, :delivered, :rated])
+  end
 end
