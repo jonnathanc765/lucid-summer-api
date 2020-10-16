@@ -15,5 +15,6 @@ RSpec.describe Order, type: :model do
     it "a order have order-lines" do
       should have_many(:order_lines)
     end
+    it { should have_many(:reviews) }
   end
 end

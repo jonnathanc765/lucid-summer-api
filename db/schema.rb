@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_13_184123) do
+ActiveRecord::Schema.define(version: 2020_10_16_125939) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -107,6 +107,17 @@ ActiveRecord::Schema.define(version: 2020_10_13_184123) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["category_id"], name: "index_products_on_category_id"
+  end
+
+  create_table "reviews", force: :cascade do |t|
+    t.string "reviewable_type", null: false
+    t.integer "reviewable_id", null: false
+    t.string "title"
+    t.text "description"
+    t.integer "stars"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["reviewable_type", "reviewable_id"], name: "index_reviews_on_reviewable_type_and_reviewable_id"
   end
 
   create_table "roles", force: :cascade do |t|
