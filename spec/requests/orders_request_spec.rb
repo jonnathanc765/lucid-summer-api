@@ -1,4 +1,9 @@
 require 'rails_helper'
+require 'support/orders_requests_helpers'
+
+RSpec.configure do |config|
+  config.include OrdersRequestsHelpers
+end
 
 RSpec.describe "Orders ~>", type: :request do
 
@@ -8,33 +13,33 @@ RSpec.describe "Orders ~>", type: :request do
 
         get "/orders"
         expect(response).to have_http_status(401)
-        
+
       end
 
       it 'users must be logged in for generate orders' do
 
         post "/orders"
         expect(response).to have_http_status(401)
-        
+
       end
     end
 
-    
+
   end
 
   describe 'Logged in users ~>' do
 
-    let(:user) do 
+    let(:user) do
       user = create(:user, first_name: "Client User")
       user.add_role 'client'
       user.save
-      user 
+      user
     end
 
-    sign_in(:user)    
+    sign_in(:user)
 
     describe "GET /orders ~>" do
-      
+
       it "Users can see its orders" do
         orders = create_list(:order, 10, user_id: user.id)
         get "/orders"
@@ -71,9 +76,9 @@ RSpec.describe "Orders ~>", type: :request do
         expect(response).to have_http_status(:ok)
         expect(payload.size).to eq(14)
 
-        
+
       end
-      
+
     end
 
     describe 'POST /orders ~>' do
@@ -92,7 +97,7 @@ RSpec.describe "Orders ~>", type: :request do
         expect(payload['order_lines'].size).to eq(10)
         expect(CartLine.all.size).to eq(0)
 
-      end 
+      end
       it 'address is required for generate a order' do
 
         cart = create_cart user
@@ -103,7 +108,7 @@ RSpec.describe "Orders ~>", type: :request do
 
         expect(response).to have_http_status(:unprocessable_entity)
         expect(Order.all.size).to eq(0)
-      end   
+      end
       it 'must exists cart lines of current user' do
 
         cart = create_cart user, false
@@ -115,7 +120,7 @@ RSpec.describe "Orders ~>", type: :request do
         expect(response).to have_http_status(:unprocessable_entity)
         expect(Order.all.size).to eq(0)
 
-      end 
+      end
       it 'current user must be owner of id address sent it' do
 
         cart = create_cart user
@@ -130,7 +135,7 @@ RSpec.describe "Orders ~>", type: :request do
         expect(Order.all.size).to eq(0)
         expect(OrderLine.all.size).to eq(0)
 
-      end 
+      end
 
       it 'address must exists' do
 
@@ -144,7 +149,7 @@ RSpec.describe "Orders ~>", type: :request do
         expect(Order.all.size).to eq(0)
         expect(OrderLine.all.size).to eq(0)
 
-      end 
+      end
     end
 
     describe 'GET /orders/:id ~>' do
@@ -157,8 +162,8 @@ RSpec.describe "Orders ~>", type: :request do
         expect(response).to have_http_status(:ok)
         expect(payload).to_not be_empty
         expect(payload['order_lines'].size).to eq(10)
-        
-      end      
+
+      end
     end
 
     describe 'update orders ~>' do
@@ -169,46 +174,19 @@ RSpec.describe "Orders ~>", type: :request do
         post "/orders/#{order.id}/update_status", params: {status: "1"}
 
         expect(response).to have_http_status(:ok)
-        expect(payload).to_not be_empty 
+        expect(payload).to_not be_empty
         expect(payload['status']).to eq("on_process")
       end
 
       it 'order must be pending for updates status on process' do
-  
+
         order = create_order user, true, 1
-  
+
         post "/orders/#{order.id}/update_status", params: {status: "1"}
-  
+
         expect(response).to have_http_status(:unprocessable_entity)
-        expect(payload).to_not be_empty 
+        expect(payload).to_not be_empty
       end
     end
   end
-end
-
-def create_cart(user, with_lines = true)
-  
-  cart = Cart.create(user_id: user.id)
-  
-  if with_lines 
-    products = create_list(:product, 10)
-    products.each do |p|
-      cart.cart_lines.create(product_id: p['id'], quantity: 2)
-    end
-  end
-  
-  cart
-end
-
-def create_order(user, with_lines = true, order_status = 0)
-  order = create(:order, user_id: user.id, status: order_status)
-  
-  if with_lines 
-    products = create_list(:product, 10)
-    products.each do |p|
-      order.order_lines.create(product_id: p['id'], quantity: 2, price: p['retail_price'], unit_type: 'Unit')
-    end
-  end
-  
-  order
 end

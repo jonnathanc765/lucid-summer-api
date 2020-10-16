@@ -7,4 +7,3 @@ FactoryBot.define do
     password { "password" }
   end
 end
- 
