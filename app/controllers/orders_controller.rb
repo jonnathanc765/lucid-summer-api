@@ -1,6 +1,6 @@
 class OrdersController < ApplicationController
     before_action :authenticate_user!
-    before_action :set_order, only: [:show]
+    before_action :set_order, only: [:show, :update_status]
     
     def index 
         if current_user.has_role? "admin" or current_user.has_role? "super-admin"
@@ -46,6 +46,16 @@ class OrdersController < ApplicationController
         render json: @order, include: [:order_lines], status: :ok
     end
 
+    def update_status
+
+        
+        if Order.statuses[@order.status] >= status_params[:status].to_i
+            return render json: {message: 'Status must be valid'}, status: :unprocessable_entity
+        end
+        @order.update! status: status_params[:status].to_i
+        render json: @order, status: :ok
+    end
+
 
     private
         def order_params
@@ -53,7 +63,11 @@ class OrdersController < ApplicationController
         end
 
         def set_order 
-            @order = Order.find(params[:id])
+            @order = Order.find(params[:id].to_i)
+        end
+
+        def status_params
+            params.permit(:status)
         end
 
 end

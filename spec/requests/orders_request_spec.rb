@@ -87,7 +87,7 @@ RSpec.describe "Orders ~>", type: :request do
 
         expect(response).to have_http_status(:created)
         expect(payload).to_not be_empty
-        expect(payload["status"]).to eq(0)
+        expect(payload["status"]).to eq("pending")
         expect(payload["address"]).to eq(address.address)
         expect(payload['order_lines'].size).to eq(10)
         expect(CartLine.all.size).to eq(0)
@@ -160,6 +160,29 @@ RSpec.describe "Orders ~>", type: :request do
         
       end      
     end
+
+    describe 'update orders ~>' do
+
+      it 'it updates order to on process' do
+        order = create_order user
+
+        post "/orders/#{order.id}/update_status", params: {status: "1"}
+
+        expect(response).to have_http_status(:ok)
+        expect(payload).to_not be_empty 
+        expect(payload['status']).to eq("on_process")
+      end
+
+      it 'order must be pending for updates status on process' do
+  
+        order = create_order user, true, 1
+  
+        post "/orders/#{order.id}/update_status", params: {status: "1"}
+  
+        expect(response).to have_http_status(:unprocessable_entity)
+        expect(payload).to_not be_empty 
+      end
+    end
   end
 end
 
@@ -177,9 +200,8 @@ def create_cart(user, with_lines = true)
   cart
 end
 
-def create_order(user, with_lines = true)
-  
-  order = create(:order, user_id: user.id)
+def create_order(user, with_lines = true, order_status = 0)
+  order = create(:order, user_id: user.id, status: order_status)
   
   if with_lines 
     products = create_list(:product, 10)

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_10_13_184123) do
+ActiveRecord::Schema.define(version: 2020_10_16_125939) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -78,7 +78,7 @@ ActiveRecord::Schema.define(version: 2020_10_13_184123) do
     t.integer "quantity"
     t.string "unit_type"
     t.float "price"
-    t.boolean "check"
+    t.boolean "check", default: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["order_id"], name: "index_order_lines_on_order_id"
@@ -91,7 +91,7 @@ ActiveRecord::Schema.define(version: 2020_10_13_184123) do
     t.string "city"
     t.string "state"
     t.string "country"
-    t.integer "status"
+    t.integer "status", default: 0
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["user_id"], name: "index_orders_on_user_id"
@@ -107,6 +107,17 @@ ActiveRecord::Schema.define(version: 2020_10_13_184123) do
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["category_id"], name: "index_products_on_category_id"
+  end
+
+  create_table "reviews", force: :cascade do |t|
+    t.string "reviewable_type", null: false
+    t.integer "reviewable_id", null: false
+    t.string "title"
+    t.text "description"
+    t.integer "stars"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["reviewable_type", "reviewable_id"], name: "index_reviews_on_reviewable_type_and_reviewable_id"
   end
 
   create_table "roles", force: :cascade do |t|

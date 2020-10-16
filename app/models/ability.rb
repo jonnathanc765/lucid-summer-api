@@ -5,9 +5,10 @@ class Ability
 
   def initialize(user)
 
-    # Define permissions for not logged in user here 
+    # Define permissions for not guest users here 
     can :read, Product
     can :read, Category
+    can :read, Review
 
     if user.present?
 
@@ -20,15 +21,14 @@ class Ability
       end
 
       if user.has_role? "admin"
-
         can :manage, Product 
-
       end
 
       if user.has_role? "client"
         can :manage, Cart
         can :manage, CartLine
         can :manage, Order, user_id: user.id
+        can [:create], Review
       end
     end
   end

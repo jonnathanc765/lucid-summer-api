@@ -9,6 +9,7 @@ Rails.application.routes.draw do
   resources :cart_lines, only: [:create, :destroy]
   resources :addresses, only: [:index, :create, :update, :destroy, :show]
   resources :orders, only: [:index, :create, :show]
+  resources :reviews, only: [:create, :show]
 
 
   # Custom routes
@@ -17,4 +18,6 @@ Rails.application.routes.draw do
 
   post "/product_images/:id", to: 'product_images#create'
 
+  post '/checklist/:id', to: 'checklist#check'
+  post '/orders/:id/update_status', to: 'orders#update_status'
 end
