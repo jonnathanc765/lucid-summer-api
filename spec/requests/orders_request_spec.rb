@@ -162,6 +162,7 @@ RSpec.describe "Orders ~>", type: :request do
     end
 
     describe 'update orders ~>' do
+
       it 'it updates order to on process' do
         order = create_order user
 
@@ -173,14 +174,14 @@ RSpec.describe "Orders ~>", type: :request do
       end
 
       it 'order must be pending for updates status on process' do
+  
         order = create_order user, true, 1
-
+  
         post "/orders/#{order.id}/update_status", params: {status: "1"}
-
+  
         expect(response).to have_http_status(:unprocessable_entity)
         expect(payload).to_not be_empty 
       end
-
     end
   end
 end
