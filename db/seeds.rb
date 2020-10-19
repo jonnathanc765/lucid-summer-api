@@ -6,9 +6,14 @@
 #   movies = Movie.create([{ name: 'Star Wars' }, { name: 'Lord of the Rings' }])
 #   Character.create(name: 'Luke', movie: movies.first)
 
+include FactoryBot::Syntax::Methods
+
+
 ActiveRecord::Base.connection.execute("TRUNCATE TABLE users_roles")
 Role.destroy_all
 User.destroy_all
+Product.destroy_all
+Category.destroy_all
 
 Role.create(name: "super-admin")
 Role.create(name: "admin")
@@ -38,6 +43,12 @@ when 'development'
 
   client = User.create(first_name: "Client", last_name: "User", email: "client@htdevs.com", password: "password", phone: "+5715884455241", )
   client.add_role "client"
+
+  categories = create_list(:category, 4)
+  categories.each do |category|
+    create_list(:product, 10, category_id: category.id)
+  end
+
 
 
 when 'test'

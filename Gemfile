@@ -42,16 +42,20 @@ group :development, :test do
   gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
   # for debugging 
   gem 'pry-rails'
+  # for testing
   gem 'rspec-rails', '~> 4.0.1'
-end
-
-group :development do
+  # fake data generators
+  gem 'factory_bot_rails', '~> 6.1'
+  gem 'faker', '~> 2.13'
 end
 
 group :test do 
+  # Fake data generators
   gem 'factory_bot_rails', '~> 6.1'
-  gem 'shoulda-matchers', '~> 4.0'
   gem 'faker', '~> 2.13'
+  # Matchers for testing
+  gem 'shoulda-matchers', '~> 4.0'
+  # Clean database for each unit and feature test
   gem 'database_cleaner', '~> 1.8', '>= 1.8.5'
 end
 
