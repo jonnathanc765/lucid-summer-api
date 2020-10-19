@@ -85,4 +85,27 @@ RSpec.describe "Users", type: :request do
       end
     end
   end
+
+  describe 'GET /me' do
+
+    let(:user) do
+      u = create(:user)
+      u.add_role "client"
+      u
+    end
+
+    sign_in(:user)
+
+    it 'user can retrieve his information' do
+
+      get "/me"
+
+      expect(response).to have_http_status(:ok)
+      expect(payload["first_name"]).to eq(user.first_name)
+
+
+      
+    end
+    
+  end
 end

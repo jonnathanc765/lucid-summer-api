@@ -3,7 +3,14 @@ class ProductsController < ApplicationController
   load_and_authorize_resource
 
   def index
-    @products = Product.all
+    where_conditions = {}
+
+    if search_params[:categories].present?
+      where_conditions[:category_id] = search_params[:categories]
+    end
+
+    @products = Product.where(where_conditions)
+    
     render json: @products, status: :ok
   end
 
@@ -29,6 +36,10 @@ class ProductsController < ApplicationController
   private
     def product_params
       params.permit(:name, :retail_price, :wholesale_price, :promotion_price, :approximate_weight_per_piece, :category_id)
+    end
+
+    def search_params
+      params.permit(categories: [])
     end
 
     def set_product

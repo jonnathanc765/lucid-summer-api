@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe "Products", type: :request do
+RSpec.describe "Products ~>", type: :request do
   let(:user) do
       u = create(:user)
       u.add_role "super-admin"
@@ -9,7 +9,7 @@ RSpec.describe "Products", type: :request do
 
   sign_in(:user)
 
-  describe "GET /products" do
+  describe "GET /products ~>" do
     before { get '/products' }
 
     it "should return status code 200" do
@@ -17,14 +17,40 @@ RSpec.describe "Products", type: :request do
       expect(payload).to_not be_nil
     end
 
-    describe "with data in DB" do
-      let!(:products) { create_list(:product, 9) }
+    describe "with data in DB ~>" do
+
       it "should return a complete list of products" do
+        products = create_list(:product, 9)
         get "/products"
         expect(payload.size).to eq(products.size)
         expect(payload).to_not be_empty
         expect(response).to have_http_status(:ok)
       end
+
+      it 'user can retrieve products by category scope' do
+        category = create(:category)
+        category2 = create(:category)
+        products = create_list(:product, 5, category_id: category.id)
+        products = create_list(:product, 5, category_id: category2.id)
+
+        get "/products?categories[]=1"
+        expect(response).to have_http_status(:ok)
+        expect(payload.size).to eq(5)
+
+      end
+
+      it 'user can retrieve products by category scope' do
+        
+        product = create(:product, name: "This is the product name")
+        create_list(:product, 10)
+
+        get "/products?name=This is the product name"
+
+        expect(response).to have_http_status(:ok)
+        expect(payload.size).to eq(5)
+
+      end
+
     end
   end
 

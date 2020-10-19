@@ -13,6 +13,7 @@ Rails.application.routes.draw do
 
 
   # Custom routes
+  get '/me', to: 'users#me'
   get '/health', to: 'health#health'
   get "/cart", to: 'carts#show'
 
