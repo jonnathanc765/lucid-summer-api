@@ -9,9 +9,14 @@ class ProductsController < ApplicationController
       where_conditions[:category_id] = search_params[:categories]
     end
 
-    @products = Product.where(where_conditions)
     
-    render json: @products, status: :ok
+    if params[:name].present?
+      where_conditions[:name] = params[:name]
+    end
+
+    @products = Product.where(where_conditions).order(id: :desc).includes(:category)
+
+    render json: @products, include: [:category], status: :ok
   end
 
   def show

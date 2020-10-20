@@ -39,7 +39,7 @@ RSpec.describe "Products ~>", type: :request do
 
       end
 
-      it 'user can retrieve products by category scope' do
+      it 'user can retrieve products by name scope' do
         
         product = create(:product, name: "This is the product name")
         create_list(:product, 10)
@@ -47,8 +47,33 @@ RSpec.describe "Products ~>", type: :request do
         get "/products?name=This is the product name"
 
         expect(response).to have_http_status(:ok)
-        expect(payload.size).to eq(5)
+        expect(payload.size).to eq(1)
 
+      end
+
+      it 'user can retrieve products with its category' do 
+
+        category = create(:category)
+        product = create(:product, name: "This is the product name", category_id: category.id)
+
+        create_list(:product, 19)
+
+        get "/products"
+
+        expect(response).to have_http_status(:ok)
+        expect(payload.size).to eq(20)
+        expect(payload[19]['category']).to_not be_nil
+        expect(payload[19]['category']['name']).to eq(category.name)
+      end
+
+      it 'products its retieving in desc created order' do
+        product = create(:product, name: "This is the product name")
+        create_list(:product, 9)
+
+        get "/products"
+
+        expect(response).to have_http_status(:ok)
+        expect(payload[9]['id']).to eq(product.id)
       end
 
     end

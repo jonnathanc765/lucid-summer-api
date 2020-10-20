@@ -45,11 +45,10 @@ when 'development'
   client.add_role "client"
 
   categories = create_list(:category, 4)
+
   categories.each do |category|
     create_list(:product, 10, category_id: category.id)
   end
-
-
 
 when 'test'
   
