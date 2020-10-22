@@ -3,8 +3,8 @@ class CategoriesController < ApplicationController
   load_and_authorize_resource
 
   def index
-    @categories = Category.all
-    render json: @categories, status: :ok
+    @categories = Category.includes(:parent_category).all
+    render json: @categories, include: :parent_category, status: :ok
   end
 
   def create

@@ -67,7 +67,7 @@ RSpec.describe "Categories", type: :request do
       end
     end
 
-    describe "parent category" do
+    describe "parent category ~>" do
       let(:parent_category) { create(:category) }
       it 'can create a category with parent category' do
 
@@ -90,6 +90,20 @@ RSpec.describe "Categories", type: :request do
         post "/categories", params: req_payload
 
         expect(response).to have_http_status(:unprocessable_entity)
+      end
+
+      it 'users can retrieve categories with its parent category if has one' do
+
+        category = create(:category)
+        category2 = create(:category, parent_category_id: category.id)
+        category.parent_category = category2
+        category.save!
+
+        get "/categories"
+        
+        expect(payload[0]['parent_category']).to_not be_nil
+        expect(payload[1]['parent_category']).to_not be_nil
+
       end
 
     end
