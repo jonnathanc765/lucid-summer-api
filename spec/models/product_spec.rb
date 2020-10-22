@@ -6,6 +6,7 @@ RSpec.describe Product, type: :model do
       should validate_presence_of(:name)
       should validate_presence_of(:retail_price)
       should validate_presence_of(:wholesale_price)
+      should validate_presence_of(:approximate_weight_per_piece)
 
     end
   end
