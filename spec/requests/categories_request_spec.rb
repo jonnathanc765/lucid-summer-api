@@ -56,6 +56,15 @@ RSpec.describe "Categories", type: :request do
         expect(payload["id"]).to be_nil
         expect(payload["error"]).to_not be_empty
       end
+      it 'admin can create create categories' do
+        user.remove_role "super-admin"
+        user.add_role "admin"
+        req_payload = {name: "Child category", description: "Some herbs"}
+
+        post "/categories", params: req_payload
+
+        expect(response).to have_http_status(:created)
+      end
     end
 
     describe "parent category" do

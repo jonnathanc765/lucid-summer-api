@@ -22,6 +22,7 @@ class Ability
 
       if user.has_role? "admin"
         can :manage, Product 
+        can :manage, Category
       end
 
       if user.has_role? "client"

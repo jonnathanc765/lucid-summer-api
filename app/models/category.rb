@@ -8,9 +8,9 @@ class Category < ApplicationRecord
     self.color ||= '#FFFFFF'
   end
 
-  
 
   validates :name, presence: true
+  
   validates(
     :parent_category,
     presence: true,
