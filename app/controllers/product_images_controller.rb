@@ -4,8 +4,12 @@ class ProductImagesController < ApplicationController
   def create
 
     @product = Product.find(params[:id])
+
     authorize! :attach_images, Product
-    @product.images.attach(params[:images])
+
+    params[:images].each_value do |image| 
+      @product.images.attach(image)
+    end
 
     render json: @product, includes: [:images], status: :created
   end

@@ -20,11 +20,15 @@ class ProductsController < ApplicationController
   end
 
   def show
-    render json: @product, status: :ok
+
+    render json: @product.as_json.merge(images: @product.images.map { |image| { id: image.id, url: url_for(image) } }), status: :ok
+    
   end
 
   def create
+
     @product = Product.create!(product_params)
+    
     render json: @product, status: :created
   end
 
@@ -39,15 +43,17 @@ class ProductsController < ApplicationController
   end
 
   private
-    def product_params
-      params.permit(:name, :retail_price, :wholesale_price, :promotion_price, :approximate_weight_per_piece, :category_id)
-    end
 
-    def search_params
-      params.permit(categories: [])
-    end
+  def product_params
+    params.permit(:name, :retail_price, :wholesale_price, :promotion_price, :approximate_weight_per_piece, :category_id)
+  end
 
-    def set_product
-      @product = Product.find(params[:id])
-    end
+  def search_params
+    params.permit(categories: [])
+  end
+
+  def set_product
+    @product = Product.find(params[:id]).includes(:images)
+  end
+
 end

@@ -94,6 +94,19 @@ RSpec.describe "Products ~>", type: :request do
       get "/products/653546"
       expect(response).to have_http_status(404)
     end
+
+    it 'return a product with its images' do
+      
+      attached = fixture_file_upload('spec/storage/Products/apple.png', 'image/png')
+
+      product.images.attach(attached)
+
+      get "/products/#{product.id}"
+      expect(response).to have_http_status(:ok)
+      expect(payload["images"]).to_not be_nil
+      expect(payload["images"].size).to eq(1)
+
+    end
   end
 
   describe "POST /products/:id" do
