@@ -2,6 +2,14 @@ require 'rails_helper'
 
 RSpec.describe "ProductImages ~>", type: :request do
 
+  let(:user) do 
+    u = create(:user)
+    u.add_role "admin"
+    u
+  end
+
+  sign_in(:user)
+
     describe 'Product attachments ~>' do
 
         let(:image) { fixture_file_upload('spec/storage/Products/apple.jpg') }
@@ -31,6 +39,20 @@ RSpec.describe "ProductImages ~>", type: :request do
         
               expect(response).to have_http_status(:not_found)
 
+            end
+
+            it 'Only admin can store product image' do
+
+              user.remove_role "admin"
+              user.add_role "client"
+
+              product = create(:product)
+
+              req_payload = {images: image}
+              
+              post "/product_images/#{product.id}", params: req_payload
+        
+              expect(response).to have_http_status(:forbidden)
             end
 
         end

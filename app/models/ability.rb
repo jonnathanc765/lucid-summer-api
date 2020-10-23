@@ -15,14 +15,13 @@ class Ability
       can :manage, Address, user_id: user.id
 
       if user.has_role? "super-admin"
-
         can :manage, :all
-
       end
 
       if user.has_role? "admin"
         can :manage, Product 
         can :manage, Category
+        can :attach_images, Product
       end
 
       if user.has_role? "client"

@@ -167,6 +167,19 @@ RSpec.describe "Categories", type: :request do
     end
   end
 
+  describe 'GET /categories/:id' do
+    it 'its retrieve individual category' do
+      category = create(:category, parent_category: create(:category))
+
+      get "/categories/#{category.id}"
+
+      expect(response).to have_http_status(:ok)
+      expect(payload["id"]).to eq(category.id)
+      expect(payload["parent_category"]).to_not be_nil
+
+    end
+  end
+
   describe "PUT  /categories/{id}" do
     let!(:category) { create(:category) }
 
