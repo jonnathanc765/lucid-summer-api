@@ -19,6 +19,7 @@ class Ability
       end
 
       if user.has_role? "admin"
+        can :manage, User
         can :manage, Product 
         can :manage, Category
         can :attach_images, Product
@@ -29,6 +30,7 @@ class Ability
         can :manage, CartLine
         can :manage, Order, user_id: user.id
         can [:create], Review
+        can [:create], User
       end
     end
   end

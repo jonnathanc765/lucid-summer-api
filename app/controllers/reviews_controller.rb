@@ -28,7 +28,6 @@ class ReviewsController < ApplicationController
     
       @review = model.reviews.create!(review_params)
 
-
       render json: @review, status: :created
     end
 
@@ -38,7 +37,9 @@ class ReviewsController < ApplicationController
     end
 
     private
-      def review_params 
-        params.permit(:title, :description, :stars)
-      end
+
+    def review_params 
+      params.permit(:title, :description, :stars)
+    end
+
 end
