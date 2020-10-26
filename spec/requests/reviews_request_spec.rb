@@ -54,6 +54,37 @@ RSpec.describe "Reviews ~>", type: :request do
       u
     end
 
+    describe 'GET /reviews' do
+      it 'it retrieve a list of reviews' do
+
+        create_list(:review, 20)
+
+        get "/reviews"
+
+        expect(response).to have_http_status(:ok)
+        expect(payload.size).to eq(20)
+      end
+    end
+
+    describe 'DELETE /reviews/:id' do
+
+      let(:admin) do
+        u = create(:user)
+        u.add_role "admin"
+        u
+      end
+      sign_in(:admin)
+
+      it 'it delete a review' do
+
+        review = create(:review)
+        delete "/reviews/#{review.id}"
+        expect(response).to have_http_status(:ok)
+        expect(Review.all.size).to eq(0)
+        
+      end
+    end
+
     describe 'POST /reviews make reviews ~>' do
         
       it 'clients can make a review to delivery man' do

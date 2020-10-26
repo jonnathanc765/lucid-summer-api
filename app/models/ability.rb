@@ -22,6 +22,7 @@ class Ability
         can :manage, User
         can :manage, Product 
         can :manage, Category
+        can :manage, Review
         can :attach_images, Product
       end
 

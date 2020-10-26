@@ -50,6 +50,8 @@ when 'development'
     create_list(:product, 10, category_id: category.id)
   end
 
+  create_list(:review, 10)
+
 when 'test'
   
   # test-specific seeds ...

@@ -2,6 +2,12 @@ class ReviewsController < ApplicationController
     before_action :authenticate_user!, only: [:create]
     load_and_authorize_resource
 
+
+    def index
+      @reviews = Review.all 
+      render json: @reviews
+    end
+
     def create
 
       errors = []
@@ -36,10 +42,19 @@ class ReviewsController < ApplicationController
       render json: @review, status: :ok
     end
 
+    def destroy
+      @review.destroy
+      render json: [message: "The review was deleted"]
+    end
+
     private
 
     def review_params 
       params.permit(:title, :description, :stars)
+    end
+
+    def set_review
+      @review = Review.find(params[:id])
     end
 
 end

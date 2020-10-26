@@ -2,7 +2,7 @@ FactoryBot.define do
   factory :review do
 
     title { Faker::Lorem.sentence }
-    description { Faker::Lorem.sentences(number: 3) }
+    description { Faker::Lorem.sentences(number: 3)[0] }
     stars { Faker::Number.within(range: 1..5) }
     for_order 
 
