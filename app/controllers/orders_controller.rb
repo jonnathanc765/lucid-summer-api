@@ -8,7 +8,7 @@ class OrdersController < ApplicationController
         else
             @orders = current_user.orders 
         end
-        render json: @orders, status: :ok
+        render json: @orders, include: [:order_lines, :user], status: :ok
     end
 
     def create

@@ -50,7 +50,21 @@ when 'development'
     create_list(:product, 10, category_id: category.id)
   end
 
+  products = Product.all
+
   create_list(:review, 10)
+
+  users = create_list(:user, 5)
+
+  users.each do |user|
+
+    orders = create_list(:order, rand(5), user_id: user.id)
+  
+    orders.each do |order|
+      create_list(:order_line, rand(5), order_id: order.id, product_id: products.sample.id) 
+    end
+
+  end
 
 when 'test'
   
