@@ -78,7 +78,7 @@ RSpec.describe "Users ~>", type: :request do
         end
 
         it 'admin can asign role when creates a user' do
-          req_payload = { first_name: "Jose", last_name: "Perez", email: "jose@perez.com", phone: "+512 584 84765", password: "password", role: 'employee' }
+          req_payload = { first_name: "Jose", last_name: "Perez", email: "jose@perez.com", phone: "+512 584 84765", password: "password", roles: ['employee'] }
           post "/users", :params => req_payload
           created_user = User.last
           expect(response).to have_http_status(:created)
@@ -86,13 +86,13 @@ RSpec.describe "Users ~>", type: :request do
         end
         it 'only admin can create anothers admins' do
           user.remove_role "admin"
-          req_payload = { first_name: "Jose", last_name: "Perez", email: "jose@perez.com", phone: "+512 584 84765", password: "password", role: 'admin' }
+          req_payload = { first_name: "Jose", last_name: "Perez", email: "jose@perez.com", phone: "+512 584 84765", password: "password", roles: ['admin'] }
           post "/users", :params => req_payload
           expect(response).to have_http_status(:forbidden)
           expect(payload['error']).to_not be_empty
         end
         it 'only super admin can create another super admins' do
-          req_payload = { first_name: "Jose", last_name: "Perez", email: "jose@perez.com", phone: "+512 584 84765", password: "password", role: "super-admin" }
+          req_payload = { first_name: "Jose", last_name: "Perez", email: "jose@perez.com", phone: "+512 584 84765", password: "password", roles: ["super-admin"] }
           post "/users", params: req_payload
           expect(response).to have_http_status(:forbidden)
         end
@@ -120,6 +120,20 @@ RSpec.describe "Users ~>", type: :request do
           expect(response).to have_http_status(:unprocessable_entity)
           expect(payload).to_not be_empty
           expect(payload["error"]).to_not be_empty
+        end
+
+        it 'users can change of role' do
+          test_user = create(:user)
+
+          req_payload = { first_name: "Jose", last_name: "Perez", email: "jose@perez.com", phone: "+512 584 84765", password: "password", roles: ["admin", "delivery-man"]}
+          put "/users/#{test_user.id}", params: req_payload
+
+          test_user.roles.reload
+
+          expect(response).to have_http_status(:ok)
+          expect(test_user.roles.size).to eq(2)
+          expect(test_user.has_all_roles? "delivery-man", "admin").to eq(true)
+
         end
       end
     end
@@ -156,7 +170,7 @@ RSpec.describe "Users ~>", type: :request do
       end
 
       it 'no admin users can update anothers users' do
-        req_payload = { first_name: "Jose", last_name: "Perez", email: "jose@perez.com", phone: "+512 584 84765", password: "password", role: "client" }
+        req_payload = { first_name: "Jose", last_name: "Perez", email: "jose@perez.com", phone: "+512 584 84765", password: "password", roles: ["client"] }
         put "/users/#{no_admin_user.id}", params: req_payload
         expect(response).to have_http_status(:forbidden)
       end
@@ -169,13 +183,13 @@ RSpec.describe "Users ~>", type: :request do
         end
         sign_in(:super_admin_user)
         it 'super admin can create another super admin' do
-          req_payload = { first_name: "Jose", last_name: "Perez", email: "jose@perez.com", phone: "+512 584 84765", password: "password", role: "super-admin" }
+          req_payload = { first_name: "Jose", last_name: "Perez", email: "jose@perez.com", phone: "+512 584 84765", password: "password", roles: ["super-admin"] }
           post "/users", params: req_payload
           expect(response).to have_http_status(:created)
           expect(User.last.has_role? "super-admin").to eq(true)
         end
-        it 'super admin can create another super admin' do
-          req_payload = { first_name: "Jose", last_name: "Perez", email: "jose@perez.com", phone: "+512 584 84765", password: "password", role: "admin" }
+        it 'super admin can create another admin' do
+          req_payload = { first_name: "Jose", last_name: "Perez", email: "jose@perez.com", phone: "+512 584 84765", password: "password", roles: ["admin"] }
           post "/users", params: req_payload
           expect(response).to have_http_status(:created)
           expect(User.last.has_role? "admin").to eq(true)
