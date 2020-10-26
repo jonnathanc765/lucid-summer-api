@@ -59,7 +59,7 @@ RSpec.describe "Users ~>", type: :request do
     end
   
     describe "POST /users (to create new user) ~>" do
-      describe "create a user" do
+      describe "create a user ~>" do
   
         it "with valid data it success" do
           req_payload = { first_name: "Jose", last_name: "Perez", email: "jose@perez.com", phone: "+512 584 84765", password: "password" }
@@ -88,8 +88,13 @@ RSpec.describe "Users ~>", type: :request do
           user.remove_role "admin"
           req_payload = { first_name: "Jose", last_name: "Perez", email: "jose@perez.com", phone: "+512 584 84765", password: "password", role: 'admin' }
           post "/users", :params => req_payload
-          expect(response).to have_http_status(:unprocessable_entity)
+          expect(response).to have_http_status(:forbidden)
           expect(payload['error']).to_not be_empty
+        end
+        it 'only super admin can create another super admins' do
+          req_payload = { first_name: "Jose", last_name: "Perez", email: "jose@perez.com", phone: "+512 584 84765", password: "password", role: "super-admin" }
+          post "/users", params: req_payload
+          expect(response).to have_http_status(:forbidden)
         end
       end
     end
@@ -120,6 +125,7 @@ RSpec.describe "Users ~>", type: :request do
     end
 
     describe 'permissions ~>' do
+
       let(:no_admin_user) do 
         u = create(:user)
         u.add_role "dispatcher"
@@ -128,21 +134,55 @@ RSpec.describe "Users ~>", type: :request do
         u.add_role "client"
         u
       end
+
       sign_in(:no_admin_user)
 
       it 'no admin user cannot retrieve list of users' do
         get "/users"
-        expect(response).to have_http_status(403)
+        expect(response).to have_http_status(:forbidden)
       end
-      it 'no admin user cannot store new users' do
-        post "/users"
-        expect(response).to have_http_status(403)
+
+      it 'no admin user cannot update any user' do
+        user = create(:user)
+        req_payload = { first_name: "Jose", last_name: "Perez", email: "jose@perez.com", phone: "+512 584 84765", password: "password" }
+        put "/users/#{user.id}", params: req_payload
+        expect(response).to have_http_status(:forbidden)
       end
-      it 'no admin user cannot retrieve list of users' do
-        put "/users/1"
-        expect(response).to have_http_status(403)
+
+      it 'no admin user cannot update any user' do
+        req_payload = { first_name: "Jose", last_name: "Perez", email: "jose@perez.com", phone: "+512 584 84765", password: "password" }
+        put "/users/#{user.id}", params: req_payload
+        expect(response).to have_http_status(:forbidden)
+      end
+
+      it 'no admin users can update anothers users' do
+        req_payload = { first_name: "Jose", last_name: "Perez", email: "jose@perez.com", phone: "+512 584 84765", password: "password", role: "client" }
+        put "/users/#{no_admin_user.id}", params: req_payload
+        expect(response).to have_http_status(:forbidden)
+      end
+
+      describe 'Super admin ~>' do
+        let(:super_admin_user) do 
+          u = create(:user)
+          u.add_role "super-admin"
+          u
+        end
+        sign_in(:super_admin_user)
+        it 'super admin can create another super admin' do
+          req_payload = { first_name: "Jose", last_name: "Perez", email: "jose@perez.com", phone: "+512 584 84765", password: "password", role: "super-admin" }
+          post "/users", params: req_payload
+          expect(response).to have_http_status(:created)
+          expect(User.last.has_role? "super-admin").to eq(true)
+        end
+        it 'super admin can create another super admin' do
+          req_payload = { first_name: "Jose", last_name: "Perez", email: "jose@perez.com", phone: "+512 584 84765", password: "password", role: "admin" }
+          post "/users", params: req_payload
+          expect(response).to have_http_status(:created)
+          expect(User.last.has_role? "admin").to eq(true)
+        end
       end
 
     end
+    
   end
 end

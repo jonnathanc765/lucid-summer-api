@@ -13,26 +13,30 @@ class UsersController < ApplicationController
   end
 
   def create
-    @user = User.create!(create_params)
 
     if params[:role].present?
       errors = []
       case params[:role]
       when "admin"
-        if (!current_user.has_role? "admin")
+        if !current_user.has_any_role? "admin", "super-admin"
+          errors.push('You dont have permission for this action!')
+        end
+      when "super-admin"
+        if (!current_user.has_role? "super-admin")
           errors.push('You dont have permission for this action!')
         end
       else
         errors = []
-      end
-
+      end 
       if !errors.empty?
-        return render json: {error: errors}, status: :unprocessable_entity
+        return render json: {error: errors}, status: 403
       end
-
-      @user.add_role params[:role]
     end
+    
+    @user = User.create!(create_params)
 
+    @user.add_role params[:role]
+    
     render json: @user, status: :created
   end
 

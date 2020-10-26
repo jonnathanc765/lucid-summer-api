@@ -31,6 +31,7 @@ class Ability
         can :manage, Order, user_id: user.id
         can [:create], Review
         can [:create], User
+        can :show, User, id:user.id
       end
     end
   end
