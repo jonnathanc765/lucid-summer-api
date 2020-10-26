@@ -1,6 +1,6 @@
 class User < ActiveRecord::Base
   extend Devise::Models
-  devise :database_authenticatable, :registerable, :recoverable, :rememberable, :validatable
+  devise :database_authenticatable, :registerable, :recoverable, :rememberable
   include DeviseTokenAuth::Concerns::User
   rolify
 

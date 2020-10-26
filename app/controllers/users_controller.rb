@@ -4,12 +4,12 @@ class UsersController < ApplicationController
   
   def index
     @users = User.all
-    render json: @users
+    render json: @users, include: [:roles]
   end
 
   def show
     @user = User.find(params[:id])
-    render json: @user
+    render json: @user, include: [:roles]
   end
 
   def create
@@ -48,7 +48,7 @@ class UsersController < ApplicationController
   end
   
   def me 
-    render json: current_user, status: :ok
+    render json: current_user, include: [:roles], status: :ok
   end
 
   private

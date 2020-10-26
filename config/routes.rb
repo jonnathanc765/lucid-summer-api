@@ -10,6 +10,7 @@ Rails.application.routes.draw do
   resources :addresses, only: [:index, :create, :update, :destroy, :show]
   resources :orders, only: [:index, :create, :show]
   resources :reviews, only: [:create, :show]
+  resources :roles, only: [:index]
 
 
   # Custom routes
