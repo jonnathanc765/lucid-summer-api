@@ -52,16 +52,18 @@ when 'development'
 
   products = Product.all
 
-  create_list(:review, 10)
-
   users = create_list(:user, 5)
 
   users.each do |user|
 
-    orders = create_list(:order, rand(5), user_id: user.id)
-  
+    orders = create_list(:order, rand(1..5), user_id: user.id)
+
     orders.each do |order|
-      create_list(:order_line, rand(5), order_id: order.id, product_id: products.sample.id) 
+
+      for i in 0..rand(1..10)
+        create(:order_line, order_id: order.id, product_id: products[rand(0..(products.count - 1))].id ) 
+      end
+
     end
 
   end

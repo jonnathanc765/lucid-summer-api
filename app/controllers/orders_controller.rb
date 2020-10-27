@@ -6,7 +6,7 @@ class OrdersController < ApplicationController
         if current_user.has_role? "admin" or current_user.has_role? "super-admin"
             @orders = Order.all 
         else
-            @orders = current_user.orders 
+            @orders = current_user.orders
         end
         render json: @orders, include: [:order_lines, :user], status: :ok
     end
@@ -43,7 +43,7 @@ class OrdersController < ApplicationController
     end
 
     def show
-        render json: @order, include: [:order_lines], status: :ok
+        render json: @order, include: [:user, order_lines: {include: [:product]}], status: :ok
     end
 
     def update_status
