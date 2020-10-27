@@ -60,8 +60,10 @@ when 'development'
 
     orders.each do |order|
 
-      for i in 0..rand(1..10)
-        create(:order_line, order_id: order.id, product_id: products[rand(0..(products.count - 1))].id ) 
+      (1..5).each do |i| 
+        create(:order_line, order_id: order.id, product_id: products[rand(0..(products.count - 1))].id )
+        payload = {title: "review title test", description: "review description test", stars: rand(1..5)}
+        order.reviews.create!(payload)
       end
 
     end
@@ -73,12 +75,6 @@ when 'test'
   # test-specific seeds ...
   # (Consider having your tests set up the data they need
   # themselves instead of seeding it here!)
-
-#   Role.create(name: 'super-admin')
-#   Role.create(name: 'admin')
-#   Role.create(name: 'employee')
-#   Role.create(name: 'super-admin')
-  
 
 when 'production'
   # production seeds (if any) ...

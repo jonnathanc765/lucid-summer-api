@@ -4,7 +4,7 @@ FactoryBot.define do
     title { Faker::Lorem.sentence }
     description { Faker::Lorem.sentences(number: 3)[0] }
     stars { Faker::Number.within(range: 1..5) }
-    for_order 
+    # for_order 
 
     trait :for_user do
       association :reviewable, factory: :user

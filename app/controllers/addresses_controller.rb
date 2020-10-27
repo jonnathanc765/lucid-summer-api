@@ -28,13 +28,13 @@ class AddressesController < ApplicationController
     end
 
     private 
-        def address_params
-            params.permit(:address, :city, :state, :country)
-        end
 
-        def set_address
-            @address = Adress.find(params[:id])
-        end
+    def address_params
+        params.permit(:address, :city, :state, :country)
+    end
 
+    def set_address
+        @address = Adress.find(params[:id])
+    end
 
 end
