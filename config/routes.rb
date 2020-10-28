@@ -18,8 +18,10 @@ Rails.application.routes.draw do
   get '/health', to: 'health#health'
   get "/cart", to: 'carts#show'
 
-  post "/product_images/:id", to: 'product_images#create'
+  post "/product_images/:product_id", to: 'product_images#create'
+  delete "/product_images/:product_id/:id", to: 'product_images#destroy'
 
   post '/checklist/:id', to: 'checklist#check'
   post '/orders/:id/update_status', to: 'orders#update_status'
+
 end
