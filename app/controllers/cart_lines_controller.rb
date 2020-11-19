@@ -22,6 +22,11 @@ class CartLinesController < ApplicationController
     render json: @cart.cart_lines, status: :created
   end
 
+  def update
+    @cart_line.update!(update_params)
+    render json: @cart_line, status: :ok
+  end
+
   def destroy
     @cart_line.destroy
 
@@ -29,7 +34,10 @@ class CartLinesController < ApplicationController
   end
 
   private
-    def set_cart_line
-      @cart_line = CartLine.find params[:id]
-    end
+  def set_cart_line
+    @cart_line = CartLine.find params[:id]
+  end
+  def update_params
+    params.permit(:quantity)
+  end
 end

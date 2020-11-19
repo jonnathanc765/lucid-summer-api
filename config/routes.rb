@@ -6,7 +6,7 @@ Rails.application.routes.draw do
   resources :users, only: [:index, :show, :create, :update]
   resources :categories, only: [:index, :create, :show, :update, :destroy]
   resources :products, only: [:index, :show, :create, :update, :destroy]
-  resources :cart_lines, only: [:create, :destroy]
+  resources :cart_lines, only: [:create, :destroy, :update]
   resources :addresses, only: [:index, :create, :update, :destroy, :show]
   resources :orders, only: [:index, :create, :show]
   resources :reviews, only: [:create, :show, :index, :destroy]

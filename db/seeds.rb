@@ -55,6 +55,10 @@ when 'development'
   users = create_list(:user, 5)
 
   users.each do |user|
+    cart = Cart.create(user_id: user.id)
+
+    cart.cart_lines.create(product_id: products[rand(0..(products.count - 1))].id, quantity: rand(1..5), unit_type: 'Kg')
+    cart.cart_lines.create(product_id: products[rand(0..(products.count - 1))].id, quantity: rand(1..5), unit_type: 'Kg')
 
     orders = create_list(:order, rand(1..5), user_id: user.id)
 

@@ -67,7 +67,9 @@ RSpec.describe "CartLines", type: :request do
   end
 
   describe "with a existing cart" do
+
     let(:cart) { user.create_cart }
+
     before do
       cart.cart_lines.create(quantity: 2, product_id: products[0].id)
       cart.cart_lines.create(quantity: 2, product_id: products[1].id)
@@ -94,6 +96,17 @@ RSpec.describe "CartLines", type: :request do
       expect(response).to have_http_status(:created)
       expect(cart.cart_lines.size).to eq(1)
       expect(cart.cart_lines.first.product_id).to eq(products[1].id)
+    end
+
+    it 'client can update cart lines quantity' do
+
+      cart_line = CartLine.first
+      put "/cart_lines/#{cart_line.id}", params: {quantity: 10}
+      cart_line.reload 
+      expect(response).to have_http_status(:ok)
+      expect(payload["quantity"]).to eq(10)
+      expect(cart_line.quantity).to eq(10)
+
     end
     
   end

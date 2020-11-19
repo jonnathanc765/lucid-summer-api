@@ -4,6 +4,6 @@ class CartsController < ApplicationController
 
   def show
     @cart = Cart.first_or_create user_id: current_user.id
-    render json: @cart, include: [:cart_lines], status: :ok
+    render json: @cart, include: [cart_lines: {include: [:product]}], status: :ok
   end
 end
