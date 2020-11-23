@@ -58,16 +58,16 @@ class OrdersController < ApplicationController
 
 
     private
-        def order_params
-            params.require(:address_id)
-        end
+    def order_params
+        params.require(:address_id)
+    end
 
-        def set_order 
-            @order = Order.find(params[:id].to_i)
-        end
+    def set_order 
+        @order = Order.preload(order_lines: [:product]).find(params[:id].to_i)
+    end
 
-        def status_params
-            params.permit(:status)
-        end
+    def status_params
+        params.permit(:status)
+    end
 
 end
