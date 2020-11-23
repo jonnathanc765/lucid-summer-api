@@ -3,7 +3,11 @@ class CategoriesController < ApplicationController
   # load_and_authorize_resource
 
   def index
-    @categories = Category.includes(:parent_category).all
+    if params[:limit].present?
+      @categories = Category.includes(:parent_category).limit(params[:limit].to_i)
+    else 
+      @categories = Category.includes(:parent_category).all
+    end
     render json: @categories, include: :parent_category, status: :ok
   end
 

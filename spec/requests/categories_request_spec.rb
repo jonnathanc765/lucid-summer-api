@@ -17,7 +17,15 @@ RSpec.describe "Categories", type: :request do
         expect(payload.size).to eq(0)
         expect(payload).to be_empty
       end
+
+      it "categories can be retrieved with a custom limit via query string" do
+        create_list(:category, 20)
+        get "/categories?limit=10"
+        expect(response).to have_http_status(:ok)
+        expect(payload.size).to eq(10)
+      end
     end
+
 
     describe "with data in DB" do
       let!(:categories) { create_list(:category, 5) }
