@@ -4,7 +4,7 @@ class OrdersController < ApplicationController
     
     def index 
         if current_user.has_role? "admin" or current_user.has_role? "super-admin"
-            @orders = Order.all 
+            @orders = Order.preload(:user, :order_lines) 
         else
             @orders = current_user.orders
         end
@@ -63,7 +63,7 @@ class OrdersController < ApplicationController
     end
 
     def set_order 
-        @order = Order.preload(order_lines: [:product]).find(params[:id].to_i)
+        @order = Order.preload(:user, order_lines: [:product]).find(params[:id].to_i)
     end
 
     def status_params

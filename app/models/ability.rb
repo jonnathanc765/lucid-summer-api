@@ -9,6 +9,7 @@ class Ability
     can :read, Product
     can :read, Category
     can :read, Review
+    can :read_limited_categories, Category
 
     if user.present?
 

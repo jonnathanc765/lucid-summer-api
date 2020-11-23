@@ -24,4 +24,6 @@ Rails.application.routes.draw do
   post '/checklist/:id', to: 'checklist#check'
   post '/orders/:id/update_status', to: 'orders#update_status'
 
+  get '/categories/limited', to: 'categories#limited'
+
 end

@@ -1,6 +1,6 @@
 class CategoriesController < ApplicationController
-  before_action :authenticate_user!
-  load_and_authorize_resource
+  # before_action :authenticate_user!
+  # load_and_authorize_resource
 
   def index
     @categories = Category.includes(:parent_category).all
@@ -21,6 +21,15 @@ class CategoriesController < ApplicationController
     @category.update!(category_params)
 
     render json: @category, status: :ok
+  end
+
+  def limited
+
+    authorize! :read_limited_categories, Category
+
+    @categories = Category.preload(:limited_products)
+    render json: @categories, include: [:limited_products], status: :ok
+
   end
 
   def destroy

@@ -32,6 +32,33 @@ RSpec.describe "Categories", type: :request do
     end
   end
 
+  describe 'Clients users ~>' do
+
+    let(:client_user) do 
+      u = create(:user)
+      u.add_role "client"
+      u 
+    end
+    sign_in(:client_user)
+
+    it 'can retrieve the first 5 most popular categories with products limited setted on 10 products per category' do
+
+      categories = create_list(:category, 10)
+      categories.each do |category|
+        create_list(:product, rand(5..10), category: category)
+      end
+
+      get "/categories/limited"
+
+      expect(response).to have_http_status(:ok)
+      expect(payload).to_not be_nil
+      expect(payload.size).to eq(5)
+      expect(payload[0]['limited_products'].size).to eq(2)
+      expect(payload[1]['limited_products'].size).to eq(2)
+      expect(payload[2]['limited_products'].size).to eq(2)
+    end
+  end
+
   describe "POST /categories" do
     describe "create a category with correct data" do
       it 'save correctly' do
