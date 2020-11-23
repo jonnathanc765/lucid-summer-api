@@ -4,7 +4,7 @@ Rails.application.routes.draw do
 
   # Resources
   resources :users, only: [:index, :show, :create, :update]
-  resources :categories, only: [:index, :create, :show, :update, :destroy]
+  resources :categories, only: [:index, :create, :show, :update, :destroy], constraints: { id: /[0-9]+/ }
   resources :products, only: [:index, :show, :create, :update, :destroy]
   resources :cart_lines, only: [:create, :destroy, :update]
   resources :addresses, only: [:index, :create, :update, :destroy, :show]
@@ -24,6 +24,7 @@ Rails.application.routes.draw do
   post '/checklist/:id', to: 'checklist#check'
   post '/orders/:id/update_status', to: 'orders#update_status'
 
-  get '/categories/limited', to: 'categories#limited'
+  get '/categories/limited/', to: 'categories#limited'
+
 
 end

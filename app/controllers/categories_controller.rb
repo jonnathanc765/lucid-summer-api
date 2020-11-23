@@ -23,18 +23,17 @@ class CategoriesController < ApplicationController
     render json: @category, status: :ok
   end
 
-  def limited
-
-    authorize! :read_limited_categories, Category
-
-    @categories = Category.preload(:limited_products)
-    render json: @categories, include: [:limited_products], status: :ok
-
-  end
-
   def destroy
     @category.destroy
     render json: {message: "Record deleted"}, status: :ok
+  end
+
+  def limited
+    authorize! :read_limited_categories, Category
+
+    @categories = Category.preload(:limited_products).limit(5)
+    render json: @categories, include: [:limited_products], status: :ok
+
   end
 
   private

@@ -43,19 +43,16 @@ RSpec.describe "Categories", type: :request do
 
     it 'can retrieve the first 5 most popular categories with products limited setted on 10 products per category' do
 
-      categories = create_list(:category, 10)
-      categories.each do |category|
-        create_list(:product, rand(5..10), category: category)
-      end
+      test_category = create(:category)
+      test_products = create_list(:product, 12, category: test_category)
 
       get "/categories/limited"
 
+
       expect(response).to have_http_status(:ok)
       expect(payload).to_not be_nil
-      expect(payload.size).to eq(5)
-      expect(payload[0]['limited_products'].size).to eq(2)
-      expect(payload[1]['limited_products'].size).to eq(2)
-      expect(payload[2]['limited_products'].size).to eq(2)
+      expect(payload.size).to eq(1)
+      expect(payload[0]['limited_products'].size).to eq(10)
     end
   end
 
