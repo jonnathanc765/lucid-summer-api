@@ -24,7 +24,7 @@ class CartLinesController < ApplicationController
 
   def update
     @cart_line.update!(update_params)
-    render json: @cart_line, status: :ok
+    render json: @cart_line, include: [:product], status: :ok
   end
 
   def destroy

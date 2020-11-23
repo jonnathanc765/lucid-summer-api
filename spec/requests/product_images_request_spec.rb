@@ -21,7 +21,7 @@ RSpec.describe "ProductImages ~>", type: :request do
               product = create(:product)
 
               req_payload = Hash.new
-              req_payload['images'] = [image] 
+              req_payload['images'] = {0 => image} 
 
               post "/product_images/#{product.id}", params: req_payload
         
