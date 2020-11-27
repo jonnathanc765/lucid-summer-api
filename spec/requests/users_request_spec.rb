@@ -195,10 +195,15 @@ RSpec.describe "Users ~>", type: :request do
       end
 
       it 'Client can update his own profile' do
+
         no_admin_user.add_role "client"
         req_payload = { first_name: "Jose", last_name: "Perez", email: "jose@perez.com", phone: "+512 584 84765", password: "password" }
         put "/users/#{no_admin_user.id}", params: req_payload
         expect(response).to have_http_status(:ok)
+        expect(no_admin_user.has_role? "dispatcher").to eq(true)
+        expect(no_admin_user.has_role? "employee").to eq(true)
+        expect(no_admin_user.has_role? "delivery-man").to eq(true)
+
       end
 
       it 'Client just can update his own profile and no others' do
