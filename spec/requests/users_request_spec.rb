@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe "Users ~>", type: :request do
 
-  
+
   describe 'Guest users ~>' do
     it 'users must be authenticated for access to list' do
       get "/users"
@@ -12,7 +12,7 @@ RSpec.describe "Users ~>", type: :request do
 
   describe 'Authenticated users ~>' do
 
-    let(:user) do 
+    let(:user) do
       u = create(:user)
       u.add_role "admin"
       u
@@ -20,36 +20,36 @@ RSpec.describe "Users ~>", type: :request do
     sign_in(:user)
 
     describe "GET /users ~>" do
-      
+
       describe "without data in DB" do
         it "should return OK" do
           get '/users'
           expect(payload).to_not be_empty
           expect(payload)
         end
-  
+
         it "should return status code 200" do
           get '/users'
           expect(response).to have_http_status(:ok)
         end
       end
-  
+
       describe "with data in DB" do
         describe "GET to /users" do
           let!(:users) { create_list(:user, 9) }
-            
+
           it "should return a list of users" do
             get '/users'
             expect(response).to have_http_status(:ok)
             expect(payload.size).to eq(10)
           end
-          
+
         end
-  
+
         describe "GET to /users/{id}" do
 
           let!(:new_user) { create(:user) }
-  
+
           it "should return a single user by id param" do
             get "/users/#{new_user.id}"
             expect(response).to have_http_status(:ok)
@@ -68,16 +68,16 @@ RSpec.describe "Users ~>", type: :request do
         delete "/users/#{user.id}"
 
         expect(response).to have_http_status(:ok)
-        expect(payload['message']).to eq('Record deleted!') 
-        expect(User.all.size).to eq(0)
-        
+        expect(payload['message']).to eq('Record deleted!')
+        expect(User.all.size).to eq(1)
+
       end
-      
+
     end
-  
+
     describe "POST /users (to create new user) ~>" do
       describe "create a user ~>" do
-  
+
         it "with valid data it success" do
           req_payload = { first_name: "Jose", last_name: "Perez", email: "jose@perez.com", phone: "+512 584 84765", password: "password" }
           post "/users", :params => req_payload
@@ -85,7 +85,7 @@ RSpec.describe "Users ~>", type: :request do
           expect(payload).to_not be_empty
           expect(payload["id"]).to_not be_nil
         end
-  
+
         it "with invalid data should return a error message" do
           req_payload = { first_name: "", last_name: "", email: "invalid-email", phone: "", password: "" }
           post "/users", :params => req_payload
@@ -115,12 +115,12 @@ RSpec.describe "Users ~>", type: :request do
         end
       end
     end
-  
+
     describe "PUT /users/:id (to update a existing user) ~>" do
       describe "update a existing user" do
 
         let!(:new_user) { create(:user) }
-  
+
         it "with valid data it success" do
           req_payload = { first_name: "Jose", last_name: "Perez", email: "jose@perez.com", phone: "+512 584 84765", password: "password" }
           put "/users/#{new_user.id}", params: req_payload
@@ -128,9 +128,9 @@ RSpec.describe "Users ~>", type: :request do
           expect(payload).to_not be_nil
           expect(payload["id"]).to eq(new_user.id)
         end
-  
+
         let!(:new_user) { create(:user) }
-  
+
         it "with invalid data should return a error message" do
           req_payload = { first_name: "", last_name: "", email: "invalid-email", phone: "" }
           put "/users/#{new_user.id}", params: req_payload
@@ -157,7 +157,7 @@ RSpec.describe "Users ~>", type: :request do
 
     describe 'permissions ~>' do
 
-      let(:no_admin_user) do 
+      let(:no_admin_user) do
         u = create(:user, first_name: 'test user')
         u.add_role "dispatcher"
         u.add_role "employee"
@@ -215,7 +215,7 @@ RSpec.describe "Users ~>", type: :request do
 
 
       describe 'Super admin ~>' do
-        let(:super_admin_user) do 
+        let(:super_admin_user) do
           u = create(:user)
           u.add_role "super-admin"
           u
@@ -236,6 +236,6 @@ RSpec.describe "Users ~>", type: :request do
       end
 
     end
-    
+
   end
 end
