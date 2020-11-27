@@ -4,10 +4,12 @@ class CartLinesController < ApplicationController
 
   def create
     @cart = Cart.first_or_create user_id: current_user.id
+
     
     params[:cart_lines].each do |line|
       
-      cart_line = @cart.cart_lines.find_or_create_by product_id: line[:product_id]
+      cart_line = @cart.cart_lines.create_with(quantity: line[:quantity]).find_or_create_by( product_id: line[:product_id])
+
       request_quantity = line[:quantity].to_i
 
       if request_quantity == 0
