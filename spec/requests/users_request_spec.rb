@@ -61,7 +61,7 @@ RSpec.describe "Users ~>", type: :request do
 
     describe 'DELETE /users/:id' do
 
-      it 'los administradores pueden borrar usuarios' do
+      it 'admins can destroy users' do
 
         user = create(:user)
 
