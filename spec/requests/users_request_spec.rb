@@ -69,7 +69,6 @@ RSpec.describe "Users ~>", type: :request do
 
         expect(response).to have_http_status(:ok)
         expect(payload['message']).to eq('Record deleted!') 
-        binding.pry
         expect(User.all.size).to eq(0)
 
         

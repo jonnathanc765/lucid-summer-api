@@ -91,8 +91,9 @@ class UsersController < ApplicationController
     end
 
     @user.update!(update_params)
-
+    
     if params[:roles].present? && !params[:roles].empty?
+      @user.roles = []
       params[:roles].each do |role|
         @user.add_role role
       end
