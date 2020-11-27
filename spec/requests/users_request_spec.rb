@@ -1,6 +1,7 @@
 require 'rails_helper'
 
 RSpec.describe "Users ~>", type: :request do
+
   
   describe 'Guest users ~>' do
     it 'users must be authenticated for access to list' do
@@ -56,6 +57,24 @@ RSpec.describe "Users ~>", type: :request do
           end
         end
       end
+    end
+
+    describe 'DELETE /users/:id' do
+
+      it 'los administradores pueden borrar usuarios' do
+
+        user = create(:user)
+
+        delete "/users/#{user.id}"
+
+        expect(response).to have_http_status(:ok)
+        expect(payload['message']).to eq('Record deleted!') 
+        binding.pry
+        expect(User.all.size).to eq(0)
+
+        
+      end
+      
     end
   
     describe "POST /users (to create new user) ~>" do
@@ -141,11 +160,10 @@ RSpec.describe "Users ~>", type: :request do
     describe 'permissions ~>' do
 
       let(:no_admin_user) do 
-        u = create(:user)
+        u = create(:user, first_name: 'test user')
         u.add_role "dispatcher"
         u.add_role "employee"
         u.add_role "delivery-man"
-        u.add_role "client"
         u
       end
 
@@ -169,11 +187,29 @@ RSpec.describe "Users ~>", type: :request do
         expect(response).to have_http_status(:forbidden)
       end
 
-      it 'no admin users can update anothers users' do
+      it 'no admin users cannot update anothers users' do
+        no_admin_user.remove_role "client"
         req_payload = { first_name: "Jose", last_name: "Perez", email: "jose@perez.com", phone: "+512 584 84765", password: "password", roles: ["client"] }
         put "/users/#{no_admin_user.id}", params: req_payload
         expect(response).to have_http_status(:forbidden)
       end
+
+      it 'Client can update his own profile' do
+        no_admin_user.add_role "client"
+        req_payload = { first_name: "Jose", last_name: "Perez", email: "jose@perez.com", phone: "+512 584 84765", password: "password" }
+        put "/users/#{no_admin_user.id}", params: req_payload
+        expect(response).to have_http_status(:ok)
+      end
+
+      it 'Client just can update his own profile and no others' do
+        no_admin_user.add_role "client"
+        test_user = create(:user)
+        test_user.add_role "client"
+        req_payload = { first_name: "Jose", last_name: "Perez", email: "jose@perez.com", phone: "+512 584 84765", password: "password" }
+        put "/users/#{test_user.id}", params: req_payload
+        expect(response).to have_http_status(:forbidden)
+      end
+
 
       describe 'Super admin ~>' do
         let(:super_admin_user) do 

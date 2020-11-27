@@ -52,14 +52,6 @@ when 'development'
 
   products = Product.all
 
-  products.each do |product|
-    binding.pry
-    product.images.attach(
-      io: File.open('./../spec/storage/Products'),
-      filename: 'apple.png',
-    )
-  end
-
   users = create_list(:user, 5)
 
   users.each do |user|

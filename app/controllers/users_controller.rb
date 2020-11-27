@@ -1,5 +1,6 @@
 class UsersController < ApplicationController
   before_action :authenticate_user!
+  before_action :set_user, only: [:destroy]
   load_and_authorize_resource
   
   def index
@@ -51,6 +52,14 @@ class UsersController < ApplicationController
     render json: @user, status: :created
   end
 
+  def destroy
+
+    @user.destroy 
+
+    render json: { message: 'Record deleted!' }, status: :ok
+
+  end
+
   def update
 
     @user = User.find(params[:id])
@@ -99,6 +108,11 @@ class UsersController < ApplicationController
   end
 
   private
+
+  def set_user
+    @user = User.find(params[:id])
+  end
+
   def create_params
     params.permit(:first_name, :last_name, :phone, :email, :password)
   end
