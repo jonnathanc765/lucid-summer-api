@@ -42,25 +42,28 @@ RSpec.describe "Categories", type: :request do
 
   describe 'Clients users ~>' do
 
-    let(:client_user) do 
-      u = create(:user)
-      u.add_role "client"
-      u 
-    end
-    sign_in(:client_user)
+    # let(:client_user) do 
+    #   u = create(:user)
+    #   u.add_role "client"
+    #   u 
+    # end
+    # sign_in(:client_user)
 
     it 'can retrieve the first 5 most popular categories with products limited setted on 10 products per category' do
 
       test_category = create(:category)
       test_products = create_list(:product, 12, category: test_category)
 
-      get "/categories/limited"
+      test_category2 = create(:category)
+      test_products2 = create_list(:product, 18, category: test_category2)
 
+      get "/categories/limited"
 
       expect(response).to have_http_status(:ok)
       expect(payload).to_not be_nil
-      expect(payload.size).to eq(1)
+      expect(payload.size).to eq(2)
       expect(payload[0]['limited_products'].size).to eq(10)
+      expect(payload[1]['limited_products'].size).to eq(10)
     end
   end
 

@@ -59,7 +59,7 @@ RSpec.describe "CartLines", type: :request do
       expect(payload).to_not be_empty
       expect(payload[0]["product_id"]).to eq(products[0]["id"])
       expect(payload[1]["product_id"]).to eq(products[1]["id"])
-      expect(payload[0]["quantity"]).to eq(22)
+      expect(payload[0]["quantity"]).to eq(20)
       expect(payload[1]["quantity"]).to eq(10)
       expect(CartLine.all.count).to eq(2)
       expect(Cart.all.count).to eq(1)
