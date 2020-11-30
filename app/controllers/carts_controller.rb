@@ -3,7 +3,7 @@ class CartsController < ApplicationController
   load_and_authorize_resource
 
   def show
-    @cart = Cart.first_or_create user_id: current_user.id
+    @cart = Cart.includes(cart_lines: [:product]).first_or_create(user_id: current_user.id)
     render json: @cart, include: [cart_lines: {include: [:product]}], status: :ok
   end
 end

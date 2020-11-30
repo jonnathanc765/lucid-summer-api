@@ -8,6 +8,7 @@ RSpec.describe Order, type: :model do
       should validate_presence_of(:city)
       should validate_presence_of(:state)
       should validate_presence_of(:country)
+      should validate_presence_of(:delivery_date)
     end
   end
 

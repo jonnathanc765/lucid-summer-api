@@ -3,8 +3,7 @@ class CartLinesController < ApplicationController
   load_and_authorize_resource
 
   def create
-    @cart = Cart.first_or_create user_id: current_user.id
-
+    @cart = Cart.includes(cart_lines: [:product]).first_or_create user_id: current_user.id
     
     params[:cart_lines].each do |line|
       
@@ -25,6 +24,7 @@ class CartLinesController < ApplicationController
 
   def update
     @cart_line.update!(update_params)
+    @cart_line.preload(:product)
     render json: @cart_line, include: [:product], status: :ok
   end
 

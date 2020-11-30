@@ -44,6 +44,8 @@ when 'development'
   client = User.create(first_name: "Client", last_name: "User", email: "client@htdevs.com", password: "password", phone: "+5715884455241", )
   client.add_role "client"
 
+  create_list(:address, 3, user_id: client.id)
+
   categories = create_list(:category, 4)
 
   categories.each do |category|

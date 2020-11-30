@@ -87,13 +87,17 @@ RSpec.describe "Orders ~>", type: :request do
         cart = create_cart user
 
         address = create(:address, user_id: user.id)
+        time = Time.now
+        post "/orders", params: {address_id: address.id, delivery_date: time}
 
-        post "/orders", params: {address_id: address.id}
+        order = Order.first
 
         expect(response).to have_http_status(:created)
         expect(payload).to_not be_empty
         expect(payload["status"]).to eq("pending")
         expect(payload["address"]).to eq(address.address)
+        expect(payload["delivery_date"]).to_not be_nil
+        expect(order.delivery_date).to_not be_nil
         expect(payload['order_lines'].size).to eq(10)
         expect(CartLine.all.size).to eq(0)
 

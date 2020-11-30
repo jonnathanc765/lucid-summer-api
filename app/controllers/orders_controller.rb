@@ -12,8 +12,9 @@ class OrdersController < ApplicationController
     end
 
     def create
+        
 
-        address = Address.find_by(id: order_params.to_i)
+        address = Address.find_by(id: order_params[:address_id].to_i)
 
         if address.nil?
             return render json: {message: 'Address must exists'}, status: :unprocessable_entity
@@ -29,7 +30,7 @@ class OrdersController < ApplicationController
             return render json: {message: 'Cart must have cart lines'}, status: :unprocessable_entity
         end
 
-        order = current_user.orders.new(address: address[:address], city: address[:city], state: address[:state], country: address[:country])
+        order = current_user.orders.new(address: address[:address], city: address[:city], state: address[:state], country: address[:country], delivery_date: order_params[:delivery_date])
 
         if order.save!
             
@@ -58,8 +59,9 @@ class OrdersController < ApplicationController
 
 
     private
+
     def order_params
-        params.require(:address_id)
+        params.permit(:address_id, :delivery_date)
     end
 
     def set_order 

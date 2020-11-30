@@ -1,7 +1,7 @@
 class CategoriesController < ApplicationController
   before_action :set_category, only: [:show, :destroy, :update]
-  before_action :authenticate_user!
-  load_and_authorize_resource
+  # before_action :authenticate_user!
+  # load_and_authorize_resource
 
   def index
     if params[:limit].present?

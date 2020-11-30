@@ -4,6 +4,6 @@ class Order < ApplicationRecord
   has_many :order_lines
   has_many :reviews, as: :reviewable
 
-  validates :user_id, :address, :city, :state, :country, presence: true
+  validates :user_id, :address, :city, :state, :country, :delivery_date, presence: true
 
 end
