@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe "AvalaibleDates", type: :request do
+RSpec.describe "AvailableDates", type: :request do
 
   describe 'For clients (Logged in users)' do
 
@@ -25,5 +25,3 @@ RSpec.describe "AvalaibleDates", type: :request do
   end
 
 end
-AvailableDatesController
-AvailaibleDatesController
