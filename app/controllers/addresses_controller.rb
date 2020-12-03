@@ -12,8 +12,8 @@ class AddressesController < ApplicationController
         render json: @address, status: :ok
     end
 
-    def create 
-        @address = Address.create(address_params)
+    def create
+        @address = current_user.addresses.create(address_params)
         render json: @address, status: :created
     end
 

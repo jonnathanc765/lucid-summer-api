@@ -41,7 +41,7 @@ RSpec.describe "CartLines", type: :request do
       expect(Cart.all.count).to eq(1)
     end
 
-    it "if the cart line is existing, the product is increment" do
+    it "if the cart line is existing, the product updated of quantity" do
       cart = user.create_cart
       cart.cart_lines.create(product_id: products[0].id, quantity: 2)
 

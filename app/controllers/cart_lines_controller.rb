@@ -4,8 +4,9 @@ class CartLinesController < ApplicationController
 
   def create
     @cart = Cart.includes(cart_lines: [:product]).first_or_create user_id: current_user.id
-    
+
     params[:cart_lines].each do |line|
+
       
       cart_line = @cart.cart_lines.create_with(quantity: line[:quantity]).find_or_create_by( product_id: line[:product_id])
 
@@ -19,12 +20,11 @@ class CartLinesController < ApplicationController
       
     end
 
-    render json: @cart.cart_lines, include: [:product], status: :created
+    render json: @cart.cart_lines.reload, include: [:product], status: :created
   end
 
   def update
     @cart_line.update!(update_params)
-    @cart_line.preload(:product)
     render json: @cart_line, include: [:product], status: :ok
   end
 
