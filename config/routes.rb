@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   resources :orders, only: [:index, :create, :show]
   resources :reviews, only: [:create, :show, :index, :destroy]
   resources :roles, only: [:index]
+  resources :available_dates, only: [:index]
 
 
   # Custom routes

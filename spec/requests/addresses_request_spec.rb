@@ -73,6 +73,7 @@ RSpec.describe "Addresses ~>", type: :request do
             expect(payload['city']).to eq('Test city')
             expect(payload['state']).to eq('Test state')
             expect(payload['country']).to eq('Test country')
+            expect(payload['user_id']).to eq(user.id)
 
           end
         end
