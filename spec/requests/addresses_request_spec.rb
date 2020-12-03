@@ -64,7 +64,7 @@ RSpec.describe "Addresses ~>", type: :request do
         describe 'POST /addresses ~>' do
           it 'save correctly in DB' do
                 
-            req_payload = { address: 'Test address', city: 'Test city', state: 'Test state', country: 'Test country' }
+            req_payload = { address: 'Test address', city: 'Test city', state: 'Test state', country: 'Test country', user_id: user.id }
 
             post '/addresses', params: req_payload
 
