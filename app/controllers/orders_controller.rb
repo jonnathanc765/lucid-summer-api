@@ -30,7 +30,7 @@ class OrdersController < ApplicationController
             return render json: {message: 'Cart must have cart lines'}, status: :unprocessable_entity
         end
 
-        order = current_user.orders.new(address: address[:address], city: address[:city], state: address[:state], country: address[:country], delivery_date: order_params[:delivery_date])
+        order = current_user.orders.new(address: address[:line], city: address[:city], state: address[:state], country: address[:country], delivery_date: order_params[:delivery_date])
 
         if order.save!
             

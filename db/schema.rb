@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2020_11_30_172032) do
+ActiveRecord::Schema.define(version: 2020_12_04_154123) do
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -34,10 +34,11 @@ ActiveRecord::Schema.define(version: 2020_11_30_172032) do
   end
 
   create_table "addresses", force: :cascade do |t|
-    t.text "address"
+    t.text "line"
     t.string "city"
     t.string "state"
     t.string "country"
+    t.string "zip_code"
     t.integer "user_id", null: false
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
@@ -91,11 +92,20 @@ ActiveRecord::Schema.define(version: 2020_11_30_172032) do
     t.string "city"
     t.string "state"
     t.string "country"
+    t.string "zipcode"
     t.integer "status", default: 0
+    t.datetime "delivery_date"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.datetime "delivery_date"
     t.index ["user_id"], name: "index_orders_on_user_id"
+  end
+
+  create_table "payment_methods", force: :cascade do |t|
+    t.string "unique_id"
+    t.integer "user_id", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id"], name: "index_payment_methods_on_user_id"
   end
 
   create_table "products", force: :cascade do |t|
@@ -173,5 +183,6 @@ ActiveRecord::Schema.define(version: 2020_11_30_172032) do
   add_foreign_key "order_lines", "orders"
   add_foreign_key "order_lines", "products"
   add_foreign_key "orders", "users"
+  add_foreign_key "payment_methods", "users"
   add_foreign_key "products", "categories"
 end

@@ -50,13 +50,13 @@ RSpec.describe "Addresses ~>", type: :request do
             it 'current user only can see its addresses' do 
 
                 create_list(:address, 10)
-                addresses = create_list(:address, 2, user: user, address: "Address test for current user")
+                addresses = create_list(:address, 2, user: user, line: "Address test for current user")
                 get "/addresses"
 
                 expect(response).to have_http_status(:ok)
                 expect(payload.size).to eq(2)
-                expect(payload[0]['address']).to eq("Address test for current user")
-                expect(payload[1]['address']).to eq("Address test for current user")
+                expect(payload[0]['line']).to eq("Address test for current user")
+                expect(payload[1]['line']).to eq("Address test for current user")
 
             end
         end
@@ -64,15 +64,16 @@ RSpec.describe "Addresses ~>", type: :request do
         describe 'POST /addresses ~>' do
           it 'save correctly in DB' do
                 
-            req_payload = { address: 'Test address', city: 'Test city', state: 'Test state', country: 'Test country', user_id: user.id }
+            req_payload = { line: 'Test address', city: 'Test city', state: 'Test state', country: 'Test country', user_id: user.id, zip_code: '3001' }
 
             post '/addresses', params: req_payload
 
             expect(response).to have_http_status(:created)
-            expect(payload['address']).to eq('Test address')
+            expect(payload['line']).to eq('Test address')
             expect(payload['city']).to eq('Test city')
             expect(payload['state']).to eq('Test state')
             expect(payload['country']).to eq('Test country')
+            expect(payload['zip_code']).to eq('3001')
             expect(payload['user_id']).to eq(user.id)
 
           end
@@ -82,30 +83,31 @@ RSpec.describe "Addresses ~>", type: :request do
           it 'address can be update' do
 
             address = create(:address, user_id: user.id)
-            req_payload = { address: 'Test address', city: 'Test city', state: 'Test state', country: 'Test country' }
+            req_payload = { line: 'Test address', city: 'Test city', state: 'Test state', country: 'Test country', zip_code: '3001' }
 
             put "/addresses//#{address.id}", params: req_payload
 
-            expect(payload['address']).to eq('Test address')
+            expect(payload['line']).to eq('Test address')
             expect(payload['city']).to eq('Test city')
             expect(payload['state']).to eq('Test state')
             expect(payload['country']).to eq('Test country')
+            expect(payload['zip_code']).to eq('3001')
 
           end
 
           it 'can update only its addresses' do
 
             addresses = create_list(:address, 4)
-            create(:address, user_id: user.id, address: 'Test address')
+            create(:address, user_id: user.id, line: 'Test address')
 
-            req_payload = { address: 'Test address', city: 'Test city', state: 'Test state', country: 'Test country' }
+            req_payload = { line: 'Test address', city: 'Test city', state: 'Test state', country: 'Test country', zip_code: '3001' }
 
             put "/addresses//#{addresses[0].id}", params: req_payload
 
             expect(response).to have_http_status(:forbidden)
             no_updated_address = Address.find(addresses[0].id)
 
-            expect(no_updated_address.address).to eq(addresses[0].address)
+            expect(no_updated_address.line).to eq(addresses[0].line)
             expect(no_updated_address.city).to eq(addresses[0].city)
             expect(no_updated_address.state).to eq(addresses[0].state)
             expect(no_updated_address.country).to eq(addresses[0].country)
@@ -146,7 +148,7 @@ RSpec.describe "Addresses ~>", type: :request do
               expect(response).to have_http_status(:ok)
               expect(payload).to_not be_empty
               expect(payload['id']).to eq(address.id)
-              expect(payload['address']).to eq(address.address)
+              expect(payload['line']).to eq(address.line)
   
             end
   

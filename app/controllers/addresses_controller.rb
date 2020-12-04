@@ -30,7 +30,7 @@ class AddressesController < ApplicationController
     private 
 
     def address_params
-        params.permit(:address, :city, :state, :country)
+        params.permit(:line, :city, :state, :country, :zip_code)
     end
 
     def set_address

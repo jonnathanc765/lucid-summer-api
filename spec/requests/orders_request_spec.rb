@@ -95,7 +95,7 @@ RSpec.describe "Orders ~>", type: :request do
         expect(response).to have_http_status(:created)
         expect(payload).to_not be_empty
         expect(payload["status"]).to eq("pending")
-        expect(payload["address"]).to eq(address.address)
+        expect(payload["address"]).to eq(address.line)
         expect(payload["delivery_date"]).to_not be_nil
         expect(order.delivery_date).to_not be_nil
         expect(payload['order_lines'].size).to eq(10)
