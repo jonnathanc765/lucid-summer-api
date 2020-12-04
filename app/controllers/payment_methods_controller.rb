@@ -5,25 +5,29 @@ class PaymentMethodsController < ApplicationController
 
   def create
 
-    @openpay = OpenpayApi.new("mihqpo64jxhksuoohivz", "sk_f6aafbacebd64882a224446b1331ef3c")
+    @openpay = OpenpayApi.new("mihqpo64jxhksuoohivz","sk_f6aafbacebd64882a224446b1331ef3c")
 
     @cards = @openpay.create(:cards)
     
     address = Address.find(params[:address_id])
 
-    req_payload = create_params.merge(
+    req_payload = {
+      :holder_name => params[:holder_name],
+      :card_number => params[:card_number],
+      :cvv2 => params[:cvv2],
+      :expiration_month => params[:expiration_month],
+      :expiration_year => params[:expiration_year],
+      :device_session_id => params[:device_session_id],
       :address => {
-        "line1" => address.line,
-        "line2" => nil,
-        "line3" => nil,
-        "state" => address.state,
-        "city" => address.city,
-        "postal_code" => address.zip_code,
-        "country_code" => "MX"
+        :line1 => address.line,
+        :line2 => nil,
+        :line3 => nil,
+        :state => address.state,
+        :city => address.city,
+        :postal_code => address.zip_code,
+        :country_code => "MX"
       }
-    )
-
-    binding.pry
+    }
 
     response = @cards.create(req_payload, current_user.customer_id)
 
@@ -36,7 +40,7 @@ class PaymentMethodsController < ApplicationController
 
   def create_params
 
-    params.permit(:holder_name, :card_number, :cvv2, :expiration_month, :expiration_year)
+    params.permit(:holder_name, :card_number, :cvv2, :expiration_month, :expiration_year, :device_session_id)
 
   end 
 

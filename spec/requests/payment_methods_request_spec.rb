@@ -16,18 +16,7 @@ RSpec.describe "PaymentMethods", type: :request do
   sign_in(:client_user)
 
   let(:valid_address) do
-    valid_address = create(:address, user_id: client_user.id)
-    formated_address = {
-      "id" => valid_address.id,
-      "line1" => valid_address.line,
-      "line2" => nil,
-      "line3" => nil,
-      "state" => valid_address.state,
-      "city" => valid_address.city,
-      "postal_code" => valid_address.zip_code,
-      "country_code" => "MX"
-    }
-    formated_address
+    create(:address, user_id: client_user.id)
   end
 
   let(:customer) do 
@@ -43,10 +32,17 @@ RSpec.describe "PaymentMethods", type: :request do
       "email" => client_user.email,
       "requires_account" => false,
       "phone_number" => client_user.phone,
-      "address" => valid_address
+      "address" => {
+        "line1" => valid_address.line,
+        "line2" => nil,
+        "line3" => nil,
+        "state" => valid_address.state,
+        "city" => valid_address.city,
+        "postal_code" => valid_address.zip_code,
+        "country_code" => "MX"
+      }
     }
 
-    binding.pry
     response = @customer.create(customer_payload)
     client_user.customer_id = response["id"]
     client_user.save!
@@ -60,8 +56,8 @@ RSpec.describe "PaymentMethods", type: :request do
 
     it 'clients can create new pay methods' do
   
-      puts customer
-  
+      customer
+
       req_payload = { 
         "holder_name" => "Juan Perez Ramirez",
         "card_number" => "4242424242424242",
@@ -74,7 +70,7 @@ RSpec.describe "PaymentMethods", type: :request do
   
       post '/payment_methods', params: req_payload
   
-      expect(response).to have_http_status(:ok)
+      expect(response).to have_http_status(:created)
       expect(payload["id"]).to_not be_nil
       expect(payload["type"]).to_not be_nil
       expect(payload["brand"]).to_not be_nil
