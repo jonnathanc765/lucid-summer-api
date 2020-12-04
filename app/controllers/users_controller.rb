@@ -1,5 +1,4 @@
 class UsersController < ApplicationController
-  before_action :authenticate_user!
   before_action :set_user, only: [:destroy]
   load_and_authorize_resource
   
@@ -28,6 +27,10 @@ class UsersController < ApplicationController
           end
         when "super-admin"
           if (!current_user.has_role? "super-admin")
+            errors.push('You dont have permission for this action!')
+          end
+        when "employee", "dispatcher", "delivery-man"
+          if (!current_user or (!current_user.has_any_role? "admin", "super-admin"))
             errors.push('You dont have permission for this action!')
           end
         else

@@ -10,6 +10,7 @@ class Ability
     can :read, Category
     can :read, Review
     can :read_limited_categories, Category
+    can [:create], User
 
     if user.present?
 
@@ -32,7 +33,6 @@ class Ability
         can :manage, CartLine
         can :manage, Order, user_id: user.id
         can [:create], Review
-        can [:create], User
         can :show, User, id: user.id
         can [:update], User, id: user.id
       end

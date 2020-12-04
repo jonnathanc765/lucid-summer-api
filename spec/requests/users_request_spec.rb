@@ -6,8 +6,38 @@ RSpec.describe "Users ~>", type: :request do
   describe 'Guest users ~>' do
     it 'users must be authenticated for access to list' do
       get "/users"
-      expect(response).to have_http_status(401)
+      expect(response).to have_http_status(403)
     end
+    it 'guest users can register' do
+      req_payload = { first_name: "Jose", last_name: "Perez", email: "jose@perez.com", phone: "+512 584 84765", password: "password" }
+      post "/users", :params => req_payload
+      expect(response).to have_http_status(:created)
+      expect(payload).to_not be_empty
+      expect(payload["id"]).to_not be_nil
+      expect(User.all.size).to eq(1)
+    end
+    it 'can create with employee role' do
+      req_payload = { first_name: "Jose", last_name: "Perez", email: "jose@perez.com", phone: "+512 584 84765", password: "password", roles: ["employee"] }
+      post "/users", :params => req_payload
+      expect(response).to have_http_status(:forbidden)
+      expect(payload).to_not be_empty
+      expect(User.all.size).to eq(0)
+    end
+    it 'can create with dispatcher role' do
+      req_payload = { first_name: "Jose", last_name: "Perez", email: "jose@perez.com", phone: "+512 584 84765", password: "password", roles: ["dispatcher"] }
+      post "/users", :params => req_payload
+      expect(response).to have_http_status(:forbidden)
+      expect(payload).to_not be_empty
+      expect(User.all.size).to eq(0)
+    end
+    it 'can create with delivery-man role' do
+      req_payload = { first_name: "Jose", last_name: "Perez", email: "jose@perez.com", phone: "+512 584 84765", password: "password", roles: ["delivery-man"] }
+      post "/users", :params => req_payload
+      expect(response).to have_http_status(:forbidden)
+      expect(payload).to_not be_empty
+      expect(User.all.size).to eq(0)
+    end
+
   end
 
   describe 'Authenticated users ~>' do
