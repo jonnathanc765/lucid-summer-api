@@ -13,7 +13,6 @@ class OrdersController < ApplicationController
 
     def create
         
-
         address = Address.find_by(id: order_params[:address_id].to_i)
 
         if address.nil?
@@ -39,6 +38,29 @@ class OrdersController < ApplicationController
             end
             cart.cart_lines.destroy_all
         end
+
+        source = PaymentMethod.find(params[:payment_method_id])
+
+        charges_details = {
+            "method" => "card",
+            "source_id" => source.unique_id,
+            "amount" => order.total,
+            "currency" => "MXN",
+            "description" => "Cargo por pedido #00#{order.id}",
+            "order_id" => order.id
+        }
+
+        @openpay = OpenpayApi.new("mihqpo64jxhksuoohivz","sk_f6aafbacebd64882a224446b1331ef3c")
+
+        @charges = @openpay.create(:charges)
+
+        begin
+            response = @charges.create(charges_details, current_user.customer_id)
+        rescue => exception
+            binding.pry            
+        end
+
+        order["payment_details"] = response 
 
         render json: order, include: [:order_lines], status: :created
     end

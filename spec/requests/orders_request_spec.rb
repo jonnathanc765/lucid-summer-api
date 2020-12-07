@@ -1,6 +1,10 @@
 require 'rails_helper'
 require 'support/orders_requests_helpers'
 
+
+
+
+
 RSpec.configure do |config|
   config.include OrdersRequestsHelpers
 end
@@ -28,6 +32,124 @@ RSpec.describe "Orders ~>", type: :request do
   end
 
   describe 'Logged in users ~>' do
+
+
+
+    # Necesaries vars 
+
+    let(:openpay) do 
+      openpay = OpenpayApi.new("mihqpo64jxhksuoohivz","sk_f6aafbacebd64882a224446b1331ef3c")
+      openpay 
+    end
+  
+    let(:client_user) do
+      user = create(:user)
+      user.add_role "client" 
+      user
+    end
+  
+    sign_in(:client_user)
+  
+    let(:valid_address) do
+      create(:address, user_id: client_user.id)
+    end
+  
+    let(:customer) do 
+  
+      @customer = openpay.create(:customers)
+  
+      @customer.delete_all
+      
+      customer_payload = {
+        "external_id" => client_user.id,
+        "name" => client_user.first_name,
+        "last_name" => client_user.last_name,
+        "email" => client_user.email,
+        "requires_account" => false,
+        "phone_number" => client_user.phone,
+        "address" => {
+          "line1" => valid_address.line,
+          "line2" => nil,
+          "line3" => nil,
+          "state" => valid_address.state,
+          "city" => valid_address.city,
+          "postal_code" => valid_address.zip_code,
+          "country_code" => "MX"
+        }
+      }
+  
+      response = @customer.create(customer_payload)
+      client_user.customer_id = response["id"]
+      client_user.save!
+  
+      @customer
+    end
+  
+    let(:card) do
+      customer
+  
+      @cards = openpay.create(:cards)
+  
+      req_payload = {
+        :holder_name => "Juan Perez Ramirez",
+        :card_number => "4242424242424242",
+        :cvv2 => "110",
+        :expiration_month => "12",
+        :expiration_year => "25",
+        :device_session_id => nil,
+        :address => {
+          :line1 => valid_address.line,
+          :line2 => nil,
+          :line3 => nil,
+          :state => valid_address.state,
+          :city => valid_address.city,
+          :postal_code => valid_address.zip_code,
+          :country_code => "MX"
+        }
+      }
+  
+      response = @cards.create(req_payload, client_user.customer_id)
+  
+    end
+
+    # End necesaries vars 
+
+    describe 'open pay integration' do
+      sign_in(:client_user)
+      
+      it 'the payment it is successful' do
+
+        card # instance of card with open pay
+
+        product1 = create(:product)
+        product2 = create(:product)
+        product3 = create(:product)
+
+        cart = Cart.create(user_id: client_user.id)
+
+        cart.cart_lines.create(quantity: 1, product_id: product1.id)
+        cart.cart_lines.create(quantity: 1, product_id: product2.id)
+        cart.cart_lines.create(quantity: 1, product_id: product3.id)
+
+        total = 52.2 # Total with taxes (16 % more)
+
+        address = create(:address, user_id: client_user.id)
+
+        time = Time.now
+
+        payment_method = PaymentMethod.create(unique_id: card["id"], user_id: client_user.id)
+
+        post "/orders", params: {address_id: address.id, delivery_date: time, payment_method_id: payment_method.id}
+
+        expect(response).to have_http_status(:created)
+        expect(payload).to_not be_nil  
+        expect(payload["payment_details"]).to_not be_nil
+
+
+      end
+    end
+
+
 
     let(:user) do
       user = create(:user, first_name: "Client User")
@@ -76,7 +198,6 @@ RSpec.describe "Orders ~>", type: :request do
         expect(response).to have_http_status(:ok)
         expect(payload.size).to eq(14)
 
-
       end
 
     end
@@ -102,6 +223,7 @@ RSpec.describe "Orders ~>", type: :request do
         expect(CartLine.all.size).to eq(0)
 
       end
+    
       it 'address is required for generate a order' do
 
         cart = create_cart user
@@ -113,6 +235,7 @@ RSpec.describe "Orders ~>", type: :request do
         expect(response).to have_http_status(:unprocessable_entity)
         expect(Order.all.size).to eq(0)
       end
+
       it 'must exists cart lines of current user' do
 
         cart = create_cart user, false

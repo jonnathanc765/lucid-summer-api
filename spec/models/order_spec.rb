@@ -22,4 +22,28 @@ RSpec.describe Order, type: :model do
     should define_enum_for(:status).
       with_values([:pending, :on_process, :to_deliver, :in_transit, :delivered, :rated])
   end
+
+  describe 'description' do
+    
+    it 'Method for subtotal is correct' do
+      order = create_order
+      expect(order.subtotal).to eq(45)
+    end
+    
+    it 'Method subtotal is correct' do
+      order = create_order
+      expect(order.total).to eq(52.20)
+    end
+
+  end 
+
+
+end
+
+def create_order 
+  order = create(:order)
+  create(:order_line, order_id: order.id, price: 10, quantity: 1) 
+  create(:order_line, order_id: order.id, price: 20, quantity: 1) 
+  create(:order_line, order_id: order.id, price: 15, quantity: 1) 
+  order
 end

@@ -16,6 +16,15 @@ RSpec.describe "Users ~>", type: :request do
       expect(payload["id"]).to_not be_nil
       expect(User.all.size).to eq(1)
     end
+    it 'users must not registered if a error occurs with conecction (openpay)' do
+      @openpay = OpenpayApi.new("mihqpo64jxhksuoohivz","sk_f6aafbacebd64882a224446b1331ef3c")
+      @customers = @openpay.create(:customers)
+      @customers.delete_all
+      req_payload = { first_name: "Jose", last_name: "Perez", email: "jose@perez.com", phone: "+512 584 84765", password: "password" }
+      post "/users", :params => req_payload
+      expect(response).to have_http_status(500)
+      expect(User.all.size).to eq(0)
+    end
     it 'can create with employee role' do
       req_payload = { first_name: "Jose", last_name: "Perez", email: "jose@perez.com", phone: "+512 584 84765", password: "password", roles: ["employee"] }
       post "/users", :params => req_payload

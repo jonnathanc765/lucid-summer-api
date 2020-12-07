@@ -6,4 +6,17 @@ class Order < ApplicationRecord
 
   validates :user_id, :address, :city, :state, :country, :delivery_date, presence: true
 
+
+  def subtotal 
+    subtotal = 0
+    self.order_lines.each do |order_line|
+      subtotal += order_line.quantity * order_line.price
+    end
+
+    subtotal.truncate(2)
+  end
+
+  def total 
+    (subtotal * 1.16).truncate 2
+  end
 end
