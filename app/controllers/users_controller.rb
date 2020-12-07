@@ -1,3 +1,5 @@
+require 'openpay'
+
 class UsersController < ApplicationController
   before_action :set_user, only: [:destroy]
   load_and_authorize_resource
@@ -43,14 +45,35 @@ class UsersController < ApplicationController
       end
 
     end
-    
-    @user = User.create!(create_params)
 
-    if params[:roles].present? && !params[:roles].empty?
-      params[:roles].each do |role|
-        @user.add_role role
+    # ActiveRecord::Base.transaction do 
+    
+      @user = User.create!(create_params)
+
+      if params[:roles].present? && !params[:roles].empty?
+        params[:roles].each do |role|
+          @user.add_role role
+        end
       end
-    end
+
+      if @user.has_role? "client"
+
+        @openpay = OpenpayApi.new("mihqpo64jxhksuoohivz","sk_f6aafbacebd64882a224446b1331ef3c")
+        @customer = @openpay.create(:customers)
+
+        customer_payload = {
+          "external_id" => @user.id,
+          "name" => @user.first_name,
+          "last_name" => @user.last_name,
+          "email" => @user.email,
+          "requires_account" => false,
+          "phone_number" => @user.phone
+        }
+        response = @customer.create(customer_payload)
+
+      end
+
+    # end
     
     render json: @user, status: :created
   end
