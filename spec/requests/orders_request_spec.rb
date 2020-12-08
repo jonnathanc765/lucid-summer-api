@@ -33,8 +33,6 @@ RSpec.describe "Orders ~>", type: :request do
 
   describe 'Logged in users ~>' do
 
-
-
     # Necesaries vars 
 
     let(:openpay) do 
@@ -79,7 +77,7 @@ RSpec.describe "Orders ~>", type: :request do
       client_user.customer_id = response["id"]
       client_user.save!
   
-      @customer
+      response
     end
   
     let(:card) do
@@ -110,8 +108,9 @@ RSpec.describe "Orders ~>", type: :request do
       response
     end
 
+    sign_in(:client_user)
+
     describe 'open pay integration' do
-      sign_in(:client_user)
       
       it 'the payment it is successful' do
 
@@ -143,18 +142,53 @@ RSpec.describe "Orders ~>", type: :request do
 
 
       end
+      
+      describe 'Invalids cards (messages)' do
+
+        it 'insufficient funds' do
+
+          cart = create_cart client_user
+
+          customer
+          
+          card_response = create_invalid_card openpay, "4444444444444448", valid_address, customer["id"]
+          
+          time = Time.now
+
+          payment_method = PaymentMethod.create(unique_id: card_response["id"], user_id: client_user.id, hashed_card_number: card_response["card_number"], card_brand: 1)
+
+          post "/orders", params: {address_id: valid_address.id, delivery_date: time, payment_method_id: payment_method.id, device_session_id: "kR1MiQhz2otdIuUlQkbEyitIqVMiI16f"}
+
+          expect(response).to have_http_status(402)
+          expect(payload).to_not be_empty 
+          expect(payload["message"]).to_not be_nil 
+          expect(payload["message"]).to eq("The card doesn't have sufficient funds")
+          
+        end
+
+        it 'insufficient funds' do
+
+          cart = create_cart client_user
+
+          customer
+          
+          card_response = create_invalid_card openpay, "4000000000000119", valid_address, customer["id"]
+          
+          time = Time.now
+
+          payment_method = PaymentMethod.create(unique_id: card_response["id"], user_id: client_user.id, hashed_card_number: card_response["card_number"], card_brand: 1)
+
+          post "/orders", params: {address_id: valid_address.id, delivery_date: time, payment_method_id: payment_method.id, device_session_id: "kR1MiQhz2otdIuUlQkbEyitIqVMiI16f"}
+
+          expect(response).to have_http_status(402)
+          expect(payload).to_not be_empty 
+          expect(payload["message"]).to_not be_nil 
+          expect(payload["message"]).to eq("The card was reported as stolen")
+          
+        end
+        
+      end
     end
-
-
-
-    let(:user) do
-      user = create(:user, first_name: "Client User")
-      user.add_role 'client'
-      user.save
-      user
-    end
-
-    sign_in(:client_user)
 
     describe "GET /orders ~>" do
 
@@ -316,4 +350,36 @@ RSpec.describe "Orders ~>", type: :request do
       end
     end
   end
+end
+
+
+def create_invalid_card(openpay_instance, card_number, address, customer_id)
+
+  @cards = openpay_instance.create(:cards)
+      
+  req_payload = {
+    :holder_name => "Juan Perez Ramirez",
+    :card_number => card_number,
+    :cvv2 => "110",
+    :expiration_month => "12",
+    :expiration_year => "25",
+    :device_session_id => "kR1MiQhz2otdIuUlQkbEyitIqVMiI16f",
+    :address => {
+      :line1 => address.line,
+      :line2 => nil,
+      :line3 => nil,
+      :state => address.state,
+      :city => address.city,
+      :postal_code => address.zip_code,
+      :country_code => "MX"
+    }
+  }
+
+  begin
+    invalid_card = @cards.create(req_payload, customer_id)
+  rescue => exception
+    binding.pry
+  end
+
+  invalid_card
 end
