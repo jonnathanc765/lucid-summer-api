@@ -4,7 +4,7 @@ class OrdersController < ApplicationController
     
     def index 
         if current_user.has_role? "admin" or current_user.has_role? "super-admin"
-            @orders = Order.preload(:user, :order_lines) 
+            @orders = Order.preload(:user, :order_lines).all
         else
             @orders = current_user.orders
         end
@@ -60,7 +60,6 @@ class OrdersController < ApplicationController
             order.update!(payment_id: response["id"])
         rescue => exception
             # binding.pry
-            # here goes rollback transaction  
             return render json: { message: exception.description }, status: exception.http_code     
         end
 
@@ -85,7 +84,7 @@ class OrdersController < ApplicationController
         end
         @order.update! status: status_params[:status].to_i
         render json: @order, status: :ok
-        
+
     end
 
 

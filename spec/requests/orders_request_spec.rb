@@ -59,7 +59,6 @@ RSpec.describe "Orders ~>", type: :request do
       @customer = openpay.create(:customers)
   
       customer_payload = {
-        "external_id" => client_user.id,
         "name" => client_user.first_name,
         "last_name" => client_user.last_name,
         "email" => client_user.email,
@@ -105,7 +104,7 @@ RSpec.describe "Orders ~>", type: :request do
           :country_code => "MX"
         }
       }
-  
+
       response = @cards.create(req_payload, client_user.customer_id)
 
       response
@@ -134,7 +133,7 @@ RSpec.describe "Orders ~>", type: :request do
 
         time = Time.now
 
-        payment_method = PaymentMethod.create(unique_id: card["id"], user_id: client_user.id, hashed_card_number: card.card_number, card_brand: 1)
+        payment_method = PaymentMethod.create(unique_id: card["id"], user_id: client_user.id, hashed_card_number: card["card_number"], card_brand: 1)
 
         post "/orders", params: {address_id: address.id, delivery_date: time, payment_method_id: payment_method.id, device_session_id: "kR1MiQhz2otdIuUlQkbEyitIqVMiI16f"}
 
@@ -155,12 +154,12 @@ RSpec.describe "Orders ~>", type: :request do
       user
     end
 
-    sign_in(:user)
+    sign_in(:client_user)
 
     describe "GET /orders ~>" do
 
       it "Users can see its orders" do
-        orders = create_list(:order, 10, user_id: user.id)
+        orders = create_list(:order, 10, user_id: client_user.id)
         get "/orders"
         expect(response).to have_http_status(:ok)
         expect(payload.size).to eq(10)
@@ -169,7 +168,7 @@ RSpec.describe "Orders ~>", type: :request do
 
       it 'users only can see only its orders' do
         create_list(:order, 10)
-        orders = create_list(:order, 4, user_id: user.id)
+        orders = create_list(:order, 4, user_id: client_user.id)
         get "/orders"
         expect(response).to have_http_status(:ok)
         expect(payload.size).to eq(4)
@@ -179,17 +178,17 @@ RSpec.describe "Orders ~>", type: :request do
       it 'admin and super admin can see all orders' do
 
         create_list(:order, 10)
-        orders = create_list(:order, 4, user_id: user.id)
+        orders = create_list(:order, 4, user_id: client_user.id)
 
-        user.remove_role 'client'
-        user.add_role 'admin'
+        client_user.remove_role 'client'
+        client_user.add_role 'admin'
 
         get "/orders"
         expect(response).to have_http_status(:ok)
         expect(payload.size).to eq(14)
 
-        user.remove_role 'admin'
-        user.add_role 'super-admin'
+        client_user.remove_role 'admin'
+        client_user.add_role 'super-admin'
 
         get "/orders"
         expect(response).to have_http_status(:ok)
@@ -202,12 +201,14 @@ RSpec.describe "Orders ~>", type: :request do
     describe 'POST /orders ~>' do
       it 'client can generate a order' do
 
-        cart = create_cart user
+        cart = create_cart client_user
 
-        payment_method = PaymentMethod.create(unique_id: card["id"], user_id: client_user.id, hashed_card_number: card.card_number, card_brand: 1)
+        payment_method = PaymentMethod.create(unique_id: card["id"], user_id: client_user.id, hashed_card_number: card["card_number"], card_brand: card["brand"])
 
-        address = create(:address, user_id: user.id)
+        address = create(:address, user_id: client_user.id)
+        
         time = Time.now
+
         post "/orders", params: { address_id: address.id, delivery_date: time, payment_method_id: payment_method.id, device_session_id: "kR1MiQhz2otdIuUlQkbEyitIqVMiI16f" }
 
         order = Order.first
@@ -225,9 +226,9 @@ RSpec.describe "Orders ~>", type: :request do
     
       it 'address is required for generate a order' do
 
-        cart = create_cart user
+        cart = create_cart client_user
 
-        address = create(:address, user_id: user.id)
+        address = create(:address, user_id: client_user.id)
 
         post "/orders"
 
@@ -237,9 +238,9 @@ RSpec.describe "Orders ~>", type: :request do
 
       it 'must exists cart lines of current user' do
 
-        cart = create_cart user, false
+        cart = create_cart client_user, false
 
-        address = create(:address, user_id: user.id)
+        address = create(:address, user_id: client_user.id)
 
         post "/orders", params: {address_id: address.id}
 
@@ -249,11 +250,11 @@ RSpec.describe "Orders ~>", type: :request do
       end
       it 'current user must be owner of id address sent it' do
 
-        cart = create_cart user
+        cart = create_cart client_user
 
         addresses = create_list(:address, 4)
 
-        address = create(:address, user_id: user.id)
+        address = create(:address, user_id: client_user.id)
 
         post "/orders", params: {address_id: addresses[2].id}
 
@@ -265,9 +266,9 @@ RSpec.describe "Orders ~>", type: :request do
 
       it 'address must exists' do
 
-        cart = create_cart user
+        cart = create_cart client_user
 
-        address = create(:address, user_id: user.id)
+        address = create(:address, user_id: client_user.id)
 
         post "/orders", params: {address_id: 422}
 

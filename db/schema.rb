@@ -93,6 +93,7 @@ ActiveRecord::Schema.define(version: 2020_12_04_154123) do
     t.string "state"
     t.string "country"
     t.string "zipcode"
+    t.string "payment_id"
     t.integer "status", default: 0
     t.datetime "delivery_date"
     t.datetime "created_at", precision: 6, null: false
