@@ -96,7 +96,7 @@ RSpec.describe "Orders ~>", type: :request do
         :cvv2 => "110",
         :expiration_month => "12",
         :expiration_year => "25",
-        :device_session_id => nil,
+        :device_session_id => "kR1MiQhz2otdIuUlQkbEyitIqVMiI16f",
         :address => {
           :line1 => valid_address.line,
           :line2 => nil,
@@ -139,7 +139,7 @@ RSpec.describe "Orders ~>", type: :request do
 
         payment_method = PaymentMethod.create(unique_id: card["id"], user_id: client_user.id)
 
-        post "/orders", params: {address_id: address.id, delivery_date: time, payment_method_id: payment_method.id}
+        post "/orders", params: {address_id: address.id, delivery_date: time, payment_method_id: payment_method.id, device_session_id: "kR1MiQhz2otdIuUlQkbEyitIqVMiI16f"}
 
         expect(response).to have_http_status(:created)
         expect(payload).to_not be_nil  

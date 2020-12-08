@@ -2,6 +2,13 @@ require 'rails_helper'
 
 RSpec.describe "Users ~>", type: :request do
 
+  let(:openpay) {
+    OpenpayApi.new("mihqpo64jxhksuoohivz","sk_f6aafbacebd64882a224446b1331ef3c") 
+  }
+
+  let(:customers) {
+    openpay.create(:customers)
+  }
 
   describe 'Guest users ~>' do
     it 'users must be authenticated for access to list' do
@@ -17,8 +24,7 @@ RSpec.describe "Users ~>", type: :request do
       expect(User.all.size).to eq(1)
     end
     it 'users must not registered if a error occurs with conecction (openpay)' do
-      @openpay = OpenpayApi.new("mihqpo64jxhksuoohivz","sk_f6aafbacebd64882a224446b1331ef3c")
-      @customers = @openpay.create(:customers)
+      @customers = openpay.create(:customers)
       @customers.delete_all
       req_payload = { first_name: "Jose", last_name: "Perez", email: "jose@perez.com", phone: "+512 584 84765", password: "password" }
       post "/users", :params => req_payload

@@ -46,6 +46,7 @@ class OrdersController < ApplicationController
             "source_id" => source.unique_id,
             "amount" => order.total,
             "currency" => "MXN",
+            "device_session_id": params[:device_session_id],
             "description" => "Cargo por pedido #00#{order.id}",
             "order_id" => order.id
         }
@@ -57,12 +58,17 @@ class OrdersController < ApplicationController
         begin
             response = @charges.create(charges_details, current_user.customer_id)
         rescue => exception
-            binding.pry            
+            # binding.pry
+            # here goes rollback transaction  
+            return nil          
         end
 
-        order["payment_details"] = response 
-
-        render json: order, include: [:order_lines], status: :created
+        render json: order.as_json(
+            include: [:order_lines]
+        )
+        .merge(
+            payment_details: response
+        ), status: :created
     end
 
     def show
