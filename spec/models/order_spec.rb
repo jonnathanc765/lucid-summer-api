@@ -20,7 +20,7 @@ RSpec.describe Order, type: :model do
   end
   it 'have enum status' do
     should define_enum_for(:status).
-      with_values([:pending, :on_process, :to_deliver, :in_transit, :delivered, :rated])
+      with_values([:pending, :on_process, :to_deliver, :in_transit, :delivered, :rated, :cancelled])
   end
 
   describe 'description' do

@@ -1,5 +1,5 @@
 class Order < ApplicationRecord
-  enum status: [:pending, :on_process, :to_deliver, :in_transit, :delivered, :rated]
+  enum status: [:pending, :on_process, :to_deliver, :in_transit, :delivered, :rated, :cancelled]
   belongs_to :user
   has_many :order_lines
   has_many :reviews, as: :reviewable

@@ -109,7 +109,8 @@ RSpec.describe "Orders ~>", type: :request do
       }
   
       response = @cards.create(req_payload, client_user.customer_id)
-  
+
+      response
     end
 
     # End necesaries vars 
@@ -137,7 +138,7 @@ RSpec.describe "Orders ~>", type: :request do
 
         time = Time.now
 
-        payment_method = PaymentMethod.create(unique_id: card["id"], user_id: client_user.id)
+        payment_method = PaymentMethod.create(unique_id: card["id"], user_id: client_user.id, hashed_card_number: card.card_number, card_brand: 1)
 
         post "/orders", params: {address_id: address.id, delivery_date: time, payment_method_id: payment_method.id, device_session_id: "kR1MiQhz2otdIuUlQkbEyitIqVMiI16f"}
 
@@ -207,9 +208,11 @@ RSpec.describe "Orders ~>", type: :request do
 
         cart = create_cart user
 
+        payment_method = PaymentMethod.create(unique_id: card["id"], user_id: client_user.id, hashed_card_number: card.card_number, card_brand: 1)
+
         address = create(:address, user_id: user.id)
         time = Time.now
-        post "/orders", params: {address_id: address.id, delivery_date: time}
+        post "/orders", params: { address_id: address.id, delivery_date: time, payment_method_id: payment_method.id, device_session_id: "kR1MiQhz2otdIuUlQkbEyitIqVMiI16f" }
 
         order = Order.first
 
