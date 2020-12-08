@@ -58,8 +58,6 @@ RSpec.describe "Orders ~>", type: :request do
   
       @customer = openpay.create(:customers)
   
-      @customer.delete_all
-      
       customer_payload = {
         "external_id" => client_user.id,
         "name" => client_user.first_name,
@@ -112,8 +110,6 @@ RSpec.describe "Orders ~>", type: :request do
 
       response
     end
-
-    # End necesaries vars 
 
     describe 'open pay integration' do
       sign_in(:client_user)

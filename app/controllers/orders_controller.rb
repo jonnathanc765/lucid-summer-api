@@ -49,7 +49,6 @@ class OrdersController < ApplicationController
             "currency" => "MXN",
             "device_session_id": params[:device_session_id],
             "description" => "Cargo por pedido #00#{order.id}",
-            "order_id" => order.id
         }
 
         @openpay = OpenpayApi.new("mihqpo64jxhksuoohivz","sk_f6aafbacebd64882a224446b1331ef3c")
@@ -58,6 +57,7 @@ class OrdersController < ApplicationController
 
         begin
             response = @charges.create(charges_details, current_user.customer_id)
+            order.update!(payment_id: response["id"])
         rescue => exception
             # binding.pry
             # here goes rollback transaction  
@@ -85,6 +85,7 @@ class OrdersController < ApplicationController
         end
         @order.update! status: status_params[:status].to_i
         render json: @order, status: :ok
+        
     end
 
 

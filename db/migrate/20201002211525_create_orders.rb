@@ -7,6 +7,7 @@ class CreateOrders < ActiveRecord::Migration[6.0]
       t.string :state
       t.string :country
       t.string :zipcode
+      t.string :payment_id
       t.integer :status, default: 0
       t.datetime :delivery_date
 
