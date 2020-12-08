@@ -103,6 +103,8 @@ ActiveRecord::Schema.define(version: 2020_12_04_154123) do
   create_table "payment_methods", force: :cascade do |t|
     t.string "unique_id"
     t.integer "user_id", null: false
+    t.string "hashed_card_number"
+    t.string "card_brand"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["user_id"], name: "index_payment_methods_on_user_id"

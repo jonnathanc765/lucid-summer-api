@@ -13,6 +13,7 @@ class User < ActiveRecord::Base
   has_many :addresses
   has_many :orders
   has_one :cart
+  has_many :payment_methods
   has_many :reviews, as: :reviewable
 
   after_create :assign_default_role

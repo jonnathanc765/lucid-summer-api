@@ -31,44 +31,50 @@ class OrdersController < ApplicationController
 
         order = current_user.orders.new(address: address[:line], city: address[:city], state: address[:state], country: address[:country], delivery_date: order_params[:delivery_date])
 
-        if order.save!
-            
-            cart.cart_lines.each do |line|
-                order.order_lines.create(product_id: line.product.id, quantity: line[:quantity], unit_type: line[:unit_type], price: line.product.retail_price)
+        ActiveRecord::Base.transaction do
+    
+            if order.save!
+                
+                cart.cart_lines.each do |line|
+                    order.order_lines.create(product_id: line.product.id, quantity: line[:quantity], unit_type: line[:unit_type], price: line.product.retail_price)
+                end
+    
+                cart.cart_lines.destroy_all
             end
-            cart.cart_lines.destroy_all
+    
+            source = PaymentMethod.find(params[:payment_method_id])
+    
+            charges_details = {
+                "method" => "card",
+                "source_id" => source.unique_id,
+                "amount" => order.total,
+                "currency" => "MXN",
+                "device_session_id": params[:device_session_id],
+                "description" => "Cargo por pedido #00#{order.id}",
+                "order_id" => order.id
+            }
+    
+            @openpay = OpenpayApi.new("mihqpo64jxhksuoohivz","sk_f6aafbacebd64882a224446b1331ef3c")
+    
+            @charges = @openpay.create(:charges)
+    
+            begin
+                response = @charges.create(charges_details, current_user.customer_id)
+            rescue => exception
+                # binding.pry
+                # here goes rollback transaction  
+                ActiveRecord::Rollback, exception
+                return nil          
+            end
+    
+            return render json: order.as_json(
+                include: [:order_lines]
+            )
+            .merge(
+                payment_details: response
+            ), status: :created
+
         end
-
-        source = PaymentMethod.find(params[:payment_method_id])
-
-        charges_details = {
-            "method" => "card",
-            "source_id" => source.unique_id,
-            "amount" => order.total,
-            "currency" => "MXN",
-            "device_session_id": params[:device_session_id],
-            "description" => "Cargo por pedido #00#{order.id}",
-            "order_id" => order.id
-        }
-
-        @openpay = OpenpayApi.new("mihqpo64jxhksuoohivz","sk_f6aafbacebd64882a224446b1331ef3c")
-
-        @charges = @openpay.create(:charges)
-
-        begin
-            response = @charges.create(charges_details, current_user.customer_id)
-        rescue => exception
-            # binding.pry
-            # here goes rollback transaction  
-            return nil          
-        end
-
-        render json: order.as_json(
-            include: [:order_lines]
-        )
-        .merge(
-            payment_details: response
-        ), status: :created
     end
 
     def show

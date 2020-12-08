@@ -11,11 +11,13 @@ RSpec.describe "Users ~>", type: :request do
   }
 
   describe 'Guest users ~>' do
+
     it 'users must be authenticated for access to list' do
       get "/users"
       expect(response).to have_http_status(403)
     end
-    it 'guest users can register' do
+
+    it 'guest users can register himlself' do
       req_payload = { first_name: "Jose", last_name: "Perez", email: "jose@perez.com", phone: "+512 584 84765", password: "password" }
       post "/users", :params => req_payload
       expect(response).to have_http_status(:created)
@@ -23,14 +25,17 @@ RSpec.describe "Users ~>", type: :request do
       expect(payload["id"]).to_not be_nil
       expect(User.all.size).to eq(1)
     end
-    it 'users must not registered if a error occurs with conecction (openpay)' do
-      @customers = openpay.create(:customers)
-      @customers.delete_all
+
+    it 'users can take registered emails' do
+      test_user = create(:user, email: "jose@perez.com")
       req_payload = { first_name: "Jose", last_name: "Perez", email: "jose@perez.com", phone: "+512 584 84765", password: "password" }
       post "/users", :params => req_payload
-      expect(response).to have_http_status(500)
-      expect(User.all.size).to eq(0)
+      expect(response).to have_http_status(:unprocessable_entity)
+      expect(payload["id"]).to be_nil
+      expect(User.all.size).to eq(1)
+      expect(User.first.phone).to eq(test_user.phone)
     end
+
     it 'can create with employee role' do
       req_payload = { first_name: "Jose", last_name: "Perez", email: "jose@perez.com", phone: "+512 584 84765", password: "password", roles: ["employee"] }
       post "/users", :params => req_payload
@@ -38,6 +43,7 @@ RSpec.describe "Users ~>", type: :request do
       expect(payload).to_not be_empty
       expect(User.all.size).to eq(0)
     end
+
     it 'can create with dispatcher role' do
       req_payload = { first_name: "Jose", last_name: "Perez", email: "jose@perez.com", phone: "+512 584 84765", password: "password", roles: ["dispatcher"] }
       post "/users", :params => req_payload
@@ -45,6 +51,7 @@ RSpec.describe "Users ~>", type: :request do
       expect(payload).to_not be_empty
       expect(User.all.size).to eq(0)
     end
+
     it 'can create with delivery-man role' do
       req_payload = { first_name: "Jose", last_name: "Perez", email: "jose@perez.com", phone: "+512 584 84765", password: "password", roles: ["delivery-man"] }
       post "/users", :params => req_payload

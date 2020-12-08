@@ -11,5 +11,6 @@ RSpec.describe User, type: :model do
 
     it { should have_many(:addresses) }
     it { should have_many(:reviews) }
+    it { should have_many(:payment_methods) }
   end
 end

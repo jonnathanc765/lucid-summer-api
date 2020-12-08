@@ -23,10 +23,8 @@ RSpec.describe "PaymentMethods", type: :request do
 
     @customer = openpay.create(:customers)
 
-    @customer.delete_all
-    
     customer_payload = {
-      "external_id" => client_user.id,
+      "external_id" => nil,
       "name" => client_user.first_name,
       "last_name" => client_user.last_name,
       "email" => client_user.email,
@@ -55,8 +53,6 @@ RSpec.describe "PaymentMethods", type: :request do
     sign_in(:client_user)
 
     it 'clients can create new pay methods' do
-  
-      customer
 
       req_payload = { 
         "holder_name" => "Juan Perez Ramirez",
@@ -82,14 +78,13 @@ RSpec.describe "PaymentMethods", type: :request do
       expect(payload["allows_payouts"]).to_not be_nil
       expect(payload["creation_date"]).to_not be_nil
       expect(payload["bank_name"]).to_not be_nil
-      expect(payload["customer_id"]).to_not be_nil
-  
-      customer.delete_all
-    
+      payment_method = PaymentMethod.all 
+      expect(payment_method.size).to eq(1)
+      payment_method = payment_method.first 
+      expect(payment_method.card_brand).to eq('visa')
+      expect(payment_method.hashed_card_number).to eq('424242XXXXXX4242')
+      expect(payment_method.user_id).to eq(client_user.id)
+
     end
-    
   end
-
-
-
 end

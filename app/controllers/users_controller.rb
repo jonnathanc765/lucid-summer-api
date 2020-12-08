@@ -62,7 +62,6 @@ class UsersController < ApplicationController
         @customer = @openpay.create(:customers)
 
         customer_payload = {
-          "external_id" => @user.id,
           "name" => @user.first_name,
           "last_name" => @user.last_name,
           "email" => @user.email,
