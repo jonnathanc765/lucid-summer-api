@@ -165,27 +165,6 @@ RSpec.describe "Orders ~>", type: :request do
           expect(payload["message"]).to eq("The card doesn't have sufficient funds")
           
         end
-
-        it 'insufficient funds' do
-
-          cart = create_cart client_user
-
-          customer
-          
-          card_response = create_invalid_card openpay, "4000000000000119", valid_address, customer["id"]
-          
-          time = Time.now
-
-          payment_method = PaymentMethod.create(unique_id: card_response["id"], user_id: client_user.id, hashed_card_number: card_response["card_number"], card_brand: 1)
-
-          post "/orders", params: {address_id: valid_address.id, delivery_date: time, payment_method_id: payment_method.id, device_session_id: "kR1MiQhz2otdIuUlQkbEyitIqVMiI16f"}
-
-          expect(response).to have_http_status(402)
-          expect(payload).to_not be_empty 
-          expect(payload["message"]).to_not be_nil 
-          expect(payload["message"]).to eq("The card was reported as stolen")
-          
-        end
         
       end
     end
@@ -316,7 +295,7 @@ RSpec.describe "Orders ~>", type: :request do
     describe 'GET /orders/:id ~>' do
       it 'it retieve a order' do
 
-        order = create_order user
+        order = create_order client_user
 
         get "/orders/#{order.id}"
 
@@ -330,7 +309,7 @@ RSpec.describe "Orders ~>", type: :request do
     describe 'update orders ~>' do
 
       it 'it updates order to on process' do
-        order = create_order user
+        order = create_order client_user
 
         post "/orders/#{order.id}/update_status", params: {status: "1"}
 
@@ -341,7 +320,7 @@ RSpec.describe "Orders ~>", type: :request do
 
       it 'order must be pending for updates status on process' do
 
-        order = create_order user, true, 1
+        order = create_order client_user, true, 1
 
         post "/orders/#{order.id}/update_status", params: {status: "1"}
 
