@@ -6,6 +6,9 @@ class Order < ApplicationRecord
 
   validates :user_id, :address, :city, :state, :country, :delivery_date,  presence: true
 
+  attribute :subtotal
+  attribute :total
+
 
   def subtotal 
     subtotal = 0

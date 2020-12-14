@@ -31,6 +31,8 @@ class OrdersController < ApplicationController
 
         order = current_user.orders.new(address: address[:line], city: address[:city], state: address[:state], country: address[:country], delivery_date: order_params[:delivery_date])
 
+        req_response = nil
+
         ActiveRecord::Base.transaction do
 
             if order.save!
@@ -41,8 +43,6 @@ class OrdersController < ApplicationController
 
                 cart.cart_lines.destroy_all
             end
-
-            binding.pry
 
             source = PaymentMethod.find(params[:payment_method_id])
 
@@ -60,8 +60,8 @@ class OrdersController < ApplicationController
             @charges = @openpay.create(:charges)
 
             begin
-                response = @charges.create(charges_details, current_user.customer_id)
-                order.update!(payment_id: response["id"])
+                req_response = @charges.create(charges_details, current_user.customer_id)
+                order.update!(payment_id: req_response["id"])
             rescue => exception
                 
                 raise ActiveRecord::Rollback 
@@ -74,7 +74,7 @@ class OrdersController < ApplicationController
             include: [:order_lines]
         )
         .merge(
-            payment_details: response
+            payment_details: req_response
         ), status: :created
 
     end
