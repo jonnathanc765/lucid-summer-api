@@ -68,16 +68,8 @@ RSpec.describe "PaymentMethods", type: :request do
   
       expect(response).to have_http_status(:created)
       expect(payload["id"]).to_not be_nil
-      expect(payload["type"]).to_not be_nil
-      expect(payload["brand"]).to_not be_nil
-      expect(payload["card_number"]).to_not be_nil
-      expect(payload["holder_name"]).to_not be_nil
-      expect(payload["expiration_year"]).to_not be_nil
-      expect(payload["expiration_month"]).to_not be_nil
-      expect(payload["allows_charges"]).to_not be_nil
-      expect(payload["allows_payouts"]).to_not be_nil
-      expect(payload["creation_date"]).to_not be_nil
-      expect(payload["bank_name"]).to_not be_nil
+      expect(payload["hashed_card_number"]).to_not be_nil
+      expect(payload["card_brand"]).to_not be_nil
       payment_method = PaymentMethod.all 
       expect(payment_method.size).to eq(1)
       payment_method = payment_method.first 
