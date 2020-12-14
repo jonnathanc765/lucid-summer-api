@@ -14,4 +14,15 @@ RSpec.describe Product, type: :model do
     should have_many_attached(:images)
     should belong_to(:category).optional
   end
+
+
+  it "it return a real price for product" do 
+    p1 = create(:product, promotion_price: 10)
+
+    expect(p1.current_price).to eq(10)
+
+    p2 = create(:product, promotion_price: nil, retail_price: 25)
+
+    expect(p2.current_price).to eq(25)
+  end
 end

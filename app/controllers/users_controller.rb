@@ -68,6 +68,8 @@ class UsersController < ApplicationController
       }
       response = @customer.create(customer_payload)
 
+      @user.update!(customer_id: response['id'])
+
     end
 
     render json: @user, status: :created

@@ -1,8 +1,8 @@
 class Order < ApplicationRecord
   enum status: [:pending, :on_process, :to_deliver, :in_transit, :delivered, :rated, :cancelled]
   belongs_to :user
-  has_many :order_lines
-  has_many :reviews, as: :reviewable
+  has_many :order_lines, dependent: :delete_all
+  has_many :reviews, as: :reviewable, dependent: :delete_all
 
   validates :user_id, :address, :city, :state, :country, :delivery_date,  presence: true
 

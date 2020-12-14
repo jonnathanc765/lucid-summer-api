@@ -9,12 +9,12 @@ class User < ActiveRecord::Base
   validates :email, presence: true
   validates :phone, presence: true
 
-  has_one_attached :avatar
-  has_many :addresses
-  has_many :orders
-  has_one :cart
-  has_many :payment_methods
-  has_many :reviews, as: :reviewable
+  has_one_attached :avatar, dependent: :destroy
+  has_many :addresses, dependent: :delete_all
+  has_many :orders, dependent: :delete_all
+  has_one :cart, dependent: :destroy
+  has_many :payment_methods, dependent: :delete_all
+  has_many :reviews, as: :reviewable, dependent: :delete_all
 
   after_create :assign_default_role
   
