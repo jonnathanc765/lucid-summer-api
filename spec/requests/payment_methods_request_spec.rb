@@ -86,5 +86,17 @@ RSpec.describe "PaymentMethods", type: :request do
       expect(payment_method.user_id).to eq(client_user.id)
 
     end
+    it 'list of payments methods' do
+      
+      PaymentMethod.create(unique_id: 1, hashed_card_number: "424242", card_brand: 'visa', user_id: client_user.id)
+      PaymentMethod.create(unique_id: 2, hashed_card_number: "424242", card_brand: 'visa', user_id: client_user.id)
+      PaymentMethod.create(unique_id: 3, hashed_card_number: "424242", card_brand: 'visa', user_id: client_user.id)
+
+      get "/payment_methods"
+
+      expect(response).to have_http_status(:ok)
+      expect(payload.size).to eq(3)
+      
+    end
   end
 end

@@ -1,6 +1,6 @@
 class CategoriesController < ApplicationController
   before_action :set_category, only: [:show, :destroy, :update]
-  load_and_authorize_resource
+  # load_and_authorize_resource
 
   def index
     if params[:limit].present?
@@ -36,7 +36,8 @@ class CategoriesController < ApplicationController
 
     authorize! :read_limited_categories, Category
 
-    @categories = LimitedCategory.limit(5)
+    @categories = LimitedCategory.includes(:products).limit(5)
+
     render json: @categories, status: :ok
 
   end

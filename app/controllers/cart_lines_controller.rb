@@ -3,7 +3,12 @@ class CartLinesController < ApplicationController
   load_and_authorize_resource
 
   def create
-    @cart = Cart.includes(cart_lines: [:product]).first_or_create user_id: current_user.id
+
+    @cart = Cart.includes(cart_lines: [:product]).find_by user_id: current_user.id
+
+    if @cart.nil?
+      @cart = Cart.create(user_id: current_user.id)
+    end
 
     params[:cart_lines].each do |line|
 

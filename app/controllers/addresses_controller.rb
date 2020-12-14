@@ -13,7 +13,7 @@ class AddressesController < ApplicationController
     end
 
     def create
-        @address = current_user.addresses.create(address_params)
+        @address = current_user.addresses.create!(address_params)
         render json: @address, status: :created
     end
 

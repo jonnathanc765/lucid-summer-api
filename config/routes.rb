@@ -12,7 +12,7 @@ Rails.application.routes.draw do
   resources :reviews, only: [:create, :show, :index, :destroy]
   resources :roles, only: [:index]
   resources :available_dates, only: [:index]
-  resources :payment_methods, only: [:create]
+  resources :payment_methods, only: [:create, :index]
 
 
   # Custom routes

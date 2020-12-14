@@ -31,15 +31,22 @@ class PaymentMethodsController < ApplicationController
 
     response = @cards.create(req_payload, current_user.customer_id)
 
-    current_user.payment_methods.create!(
+    @payment_method = current_user.payment_methods.create!(
       unique_id: response["id"],
       hashed_card_number: response["card_number"],
       card_brand: response["brand"],
     )
 
-    render json: response, status: :created
+    render json: @payment_method, status: :created
 
   end
+
+  def index
+    
+    @payment_methods = current_user.payment_methods
+    render json: @payment_methods, status: :ok
+  end
+
 
 
   private

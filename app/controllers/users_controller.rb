@@ -45,35 +45,31 @@ class UsersController < ApplicationController
       end
 
     end
-
-    # ActiveRecord::Base.transaction do 
     
-      @user = User.create!(create_params)
+    @user = User.create!(create_params)
 
-      if params[:roles].present? && !params[:roles].empty?
-        params[:roles].each do |role|
-          @user.add_role role
-        end
+    if params[:roles].present? && !params[:roles].empty?
+      params[:roles].each do |role|
+        @user.add_role role
       end
+    end
 
-      if @user.has_role? "client"
+    if @user.has_role? "client"
 
-        @openpay = OpenpayApi.new("mihqpo64jxhksuoohivz","sk_f6aafbacebd64882a224446b1331ef3c")
-        @customer = @openpay.create(:customers)
+      @openpay = OpenpayApi.new("mihqpo64jxhksuoohivz","sk_f6aafbacebd64882a224446b1331ef3c")
+      @customer = @openpay.create(:customers)
 
-        customer_payload = {
-          "name" => @user.first_name,
-          "last_name" => @user.last_name,
-          "email" => @user.email,
-          "requires_account" => false,
-          "phone_number" => @user.phone
-        }
-        response = @customer.create(customer_payload)
+      customer_payload = {
+        "name" => @user.first_name,
+        "last_name" => @user.last_name,
+        "email" => @user.email,
+        "requires_account" => false,
+        "phone_number" => @user.phone
+      }
+      response = @customer.create(customer_payload)
 
-      end
+    end
 
-    # end
-    
     render json: @user, status: :created
   end
 
