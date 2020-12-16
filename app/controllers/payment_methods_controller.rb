@@ -29,15 +29,24 @@ class PaymentMethodsController < ApplicationController
       }
     }
 
-    response = @cards.create(req_payload, current_user.customer_id)
 
-    @payment_method = current_user.payment_methods.create!(
-      unique_id: response["id"],
-      hashed_card_number: response["card_number"],
-      card_brand: response["brand"],
-    )
+    begin
 
-    render json: @payment_method, status: :created
+      response = @cards.create(req_payload, current_user.customer_id)
+
+      @payment_method = current_user.payment_methods.create!(
+        unique_id: response["id"],
+        hashed_card_number: response["card_number"],
+        card_brand: response["brand"],
+      )
+
+    rescue => exception
+
+      return render json: { message: exception.description }, status: exception.http_code  
+
+    end
+
+    return render json: @payment_method, status: :created
 
   end
 
