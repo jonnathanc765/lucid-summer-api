@@ -10,10 +10,11 @@ class Ability
     can :read, Category
     can :read, Review
     can :read_limited_categories, Category
-    can [:create], User
-
+    can :create, User
+    
     if user.present?
 
+      can :read_related_products, ProductsController
       can :manage, Address, user_id: user.id
 
       if user.has_role? "super-admin"

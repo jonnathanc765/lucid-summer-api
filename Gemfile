@@ -25,6 +25,8 @@ gem "aws-sdk-s3", require: false
 gem "rolify"
 # Permissions managment
 gem 'cancancan'
+# for random models
+gem 'randumb'
 
 # Use Active Storage variant
 # gem 'image_processing', '~> 1.2'

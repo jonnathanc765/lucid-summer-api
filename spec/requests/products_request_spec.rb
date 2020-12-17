@@ -27,33 +27,38 @@ RSpec.describe "Products ~>", type: :request do
         expect(response).to have_http_status(:ok)
       end
 
-      it "should return related products" do
-
-        category = create(:category)
-        products = create_list(:product, 35, category_id: category.id)
-
-        create_list(:product, 20)
-
-        get "/related_products/#{category.id}"
-
-        expect(response).to have_http_status(:ok)
-        expect(payload).to_not be_empty
-        expect(payload.size).to eq(25)
-        expect(payload[0]["category_id"]).to eq(category.id)
-
+      describe 'related products' do
+        let(:client_user) { create(:user) }
+        sign_in(:client_user)
+        it "should return related products" do
+  
+          category = create(:category)
+          products = create_list(:product, 35, category_id: category.id)
+  
+          create_list(:product, 20)
+  
+          get "/related_products/#{category.id}"
+  
+          expect(response).to have_http_status(:ok)
+          expect(payload).to_not be_empty
+          expect(payload.size).to eq(25)
+          expect(payload[0]["category_id"]).to eq(category.id)
+  
+        end
+  
+        it "should return related products without categories" do
+  
+          create_list(:product, 50)
+  
+          get "/related_products/"
+  
+          expect(response).to have_http_status(:ok)
+          expect(payload).to_not be_empty
+          expect(payload.size).to eq(25)
+  
+        end
       end
 
-      it "should return related products without categories" do
-
-        create_list(:product, 50)
-
-        get "/related_products/"
-
-        expect(response).to have_http_status(:ok)
-        expect(payload).to_not be_empty
-        expect(payload.size).to eq(25)
-
-      end
 
       it 'user can retrieve products by category scope' do
         category = create(:category)

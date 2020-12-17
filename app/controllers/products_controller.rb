@@ -1,6 +1,6 @@
 class ProductsController < ApplicationController
   before_action :authenticate_user!
-  load_and_authorize_resource
+  skip_authorize_resource :only => :related_products
 
   def index
     where_conditions = {}
@@ -8,7 +8,6 @@ class ProductsController < ApplicationController
     if search_params[:categories].present?
       where_conditions[:category_id] = search_params[:categories]
     end
-
     
     if params[:name].present?
       where_conditions[:name] = params[:name]
@@ -44,11 +43,14 @@ class ProductsController < ApplicationController
 
   def related_products 
 
+    # authorize! :related_products
+
     if params[:category_id].present? 
-      @products = Product.order(Arel.sql('RANDOM()')).where(category_id: params[:category_id]).limit(25)
+      @products = Product.where(category_id: params[:category_id]).limit(25).order_by_rand.limit(25)
     else
-      @products = Product.order(Arel.sql('RANDOM()')).limit(25)
+      @products = Product.order_by_rand.limit(25)
     end
+
 
     @products = @products.map do |product|
       product.as_json.merge(
