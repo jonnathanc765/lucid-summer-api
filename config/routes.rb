@@ -2,6 +2,9 @@ Rails.application.routes.draw do
   mount_devise_token_auth_for 'User', at: 'auth'
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
 
+  # Setting up for default host (blobs and path)
+  default_url_options :host => ENV['DEFAULT_HOST']
+
   # Resources
   resources :users, only: [:index, :show, :create, :update, :destroy]
   resources :categories, only: [:index, :create, :show, :update, :destroy], constraints: { id: /[0-9]+/ }
