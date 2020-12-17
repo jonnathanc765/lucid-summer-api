@@ -22,7 +22,8 @@ Rails.application.routes.draw do
   get '/me', to: 'users#me'
   get '/health', to: 'health#health'
   get "/cart", to: 'carts#show'
-
+  
+  get "/related_products(/:category_id)", to: "products#related_products"
   post "/product_images/:product_id", to: 'product_images#create'
   delete "/product_images/:product_id/:id", to: 'product_images#destroy'
 

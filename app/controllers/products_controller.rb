@@ -42,6 +42,26 @@ class ProductsController < ApplicationController
     render json: {message: "Record deleted"}, status: :ok
   end
 
+  def related_products 
+
+    if params[:category_id].present? 
+      @products = Product.order(Arel.sql('RANDOM()')).where(category_id: params[:category_id]).limit(25)
+    else
+      @products = Product.order(Arel.sql('RANDOM()')).limit(25)
+    end
+
+    @products = @products.map do |product|
+      product.as_json.merge(
+        images: product.images.map { 
+          |image| { id: image.id, url: url_for(image) } 
+        } 
+      )
+    end
+
+    render json: @products, status: :ok
+
+  end
+
   private
 
   def product_params
