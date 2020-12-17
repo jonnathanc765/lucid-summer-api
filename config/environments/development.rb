@@ -26,7 +26,7 @@ Rails.application.configure do
   end
 
   # Active storage default url
-  Rails.application.routes.default_url_options[:host] = '192.168.3.80:3000'
+  Rails.application.routes.default_url_options[:host] = ENV['DEFAULT_HOST']
 
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local

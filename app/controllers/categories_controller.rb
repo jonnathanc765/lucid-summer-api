@@ -12,7 +12,7 @@ class CategoriesController < ApplicationController
   end
 
   def show
-    render json: @category, include: [:parent_category], status: :ok
+    render json: @category, include: [:parent_category, :products], status: :ok
   end
 
   def create
