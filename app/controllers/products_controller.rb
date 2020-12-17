@@ -1,5 +1,6 @@
 class ProductsController < ApplicationController
   before_action :authenticate_user!
+  load_and_authorize_resource
   skip_authorize_resource :only => :related_products
 
   def index
