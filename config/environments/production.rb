@@ -1,6 +1,9 @@
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
 
+  # Setting up for default host (blobs and path)
+  Rails.application.routes.default_url_options[:host] = ENV['DEFAULT_HOST']
+  
   # Code is not reloaded between requests.
   config.cache_classes = true
 

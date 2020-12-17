@@ -19,3 +19,7 @@ Add here the rake task necessary for the correct funcionality of the project:
 To create permissions for each role, you must modify the file `app/models/ability.rb` and add your permission
 
 
+# Commands for test 
+
+p = Product.first.images.first
+Rails.application.routes.url_helpers.rails_blob_url(p)
