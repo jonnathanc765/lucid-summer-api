@@ -3,12 +3,38 @@ class OrdersController < ApplicationController
     before_action :set_order, only: [:show, :update_status]
     
     def index 
-        if current_user.has_role? "admin" or current_user.has_role? "super-admin"
-            @orders = Order.preload(:user, :order_lines).all
+
+        if current_user.has_any_role? "admin", "super-admin"
+            @orders = Order.preload(:user, order_lines: {products: [:images]}).all
+        elsif current_user.has_role? "dispatcher"
+            @orders = Order.where(status: :pending)
         else
             @orders = current_user.orders
         end
-        render json: @orders, include: [:order_lines, :user], status: :ok
+
+        @orders = @orders.map do |order|
+
+            order_lines = order.order_lines.map do |order_line|
+
+                product = order_line.product
+                
+                product.as_json.merge(
+                    images: product.images.map { 
+                        |image| { id: image.id, url: url_for(image) } 
+                    }
+                )
+
+                order_line.as_json.merge(
+                    product: product
+                )
+            end
+
+            order.as_json.merge(
+                order_lines: order_lines
+            )
+        end
+
+        render json: @orders, status: :ok
     end
 
     def create

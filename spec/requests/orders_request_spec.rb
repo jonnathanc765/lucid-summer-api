@@ -209,6 +209,29 @@ RSpec.describe "Orders ~>", type: :request do
 
       end
 
+      describe 'Dispatcher' do
+
+        let!(:dispatcher) do 
+          u = create(:user)
+          u.add_role "dispatcher"
+          u 
+        end
+        sign_in(:dispatcher)
+
+        
+        it "dispatcher can see only active orders" do
+  
+          create_list(:order, 10, status: :in_transit)
+          create_list(:order, 4, status: :pending, user_id: client_user.id)
+  
+          get "/orders"
+
+          expect(response).to have_http_status(:ok)
+          expect(payload.size).to eq(4)
+
+        end
+      end
+
     end
 
     describe 'POST /orders ~>' do

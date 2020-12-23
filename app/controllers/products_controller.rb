@@ -9,12 +9,16 @@ class ProductsController < ApplicationController
     if search_params[:categories].present?
       where_conditions[:category_id] = search_params[:categories]
     end
-    
+
+    name = ''
+
     if params[:name].present?
-      where_conditions[:name] = params[:name]
+      
+      name = params[:name]
+      
     end
 
-    @products = Product.where(where_conditions).order(id: :desc).includes(:category)
+    @products = Product.where(where_conditions).where("name LIKE '%#{name}%'").order(id: :desc).includes(:category)
 
     render json: @products, include: [:category], status: :ok
   end

@@ -18,9 +18,19 @@ class User < ActiveRecord::Base
 
   after_create :assign_default_role
   
+  attribute :isDispatcher
+  attribute :isDeliveryMan
 
   def assign_default_role
     self.add_role 'client' if self.roles.blank?
+  end
+
+  def isDispatcher 
+    self.has_role? "dispatcher"
+  end
+
+  def isDeliveryMan 
+    self.has_role? "delivery-man"
   end
 
 end
