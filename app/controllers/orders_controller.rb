@@ -7,7 +7,7 @@ class OrdersController < ApplicationController
         if current_user.has_any_role? "admin", "super-admin"
             @orders = Order.preload(:user, order_lines: {products: [:images]}).all
         elsif current_user.has_role? "dispatcher"
-            @orders = Order.where(status: :pending)
+            @orders = Order.where(status: [:pending, :on_process])
         elsif current_user.has_role? "delivery-man"
             @orders = Order.where(status: [:to_deliver, :in_transit])
         else
@@ -117,7 +117,6 @@ class OrdersController < ApplicationController
         render json: @order, status: :ok
 
     end
-
 
     private
 
