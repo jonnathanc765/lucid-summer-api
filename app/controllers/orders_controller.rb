@@ -8,6 +8,8 @@ class OrdersController < ApplicationController
             @orders = Order.preload(:user, order_lines: {products: [:images]}).all
         elsif current_user.has_role? "dispatcher"
             @orders = Order.where(status: :pending)
+        elsif current_user.has_role? "delivery-man"
+            @orders = Order.where(status: [:to_deliver, :in_transit])
         else
             @orders = current_user.orders
         end
@@ -111,11 +113,7 @@ class OrdersController < ApplicationController
 
     def update_status
 
-        
-        if Order.statuses[@order.status] >= status_params[:status].to_i
-            return render json: {message: 'Status must be valid'}, status: :unprocessable_entity
-        end
-        @order.update! status: status_params[:status].to_i
+        @order.update! status: status_params[:status]
         render json: @order, status: :ok
 
     end

@@ -17,9 +17,11 @@ RSpec.describe "Checklists", type: :request do
       post "/checklist/#{line.id}"
 
       line.reload
+      order.reload
 
       expect(response).to have_http_status(:ok)
       expect(line.check).to eq(true)
+      expect(order.status).to eq("on_process")
           
     end
   end
