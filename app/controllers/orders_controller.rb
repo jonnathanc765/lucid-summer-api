@@ -5,7 +5,7 @@ class OrdersController < ApplicationController
     def index 
 
         if current_user.has_any_role? "admin", "super-admin"
-            @orders = Order.preload(:user, order_lines: {products: [:images]}).all
+            @orders = Order.preload(:user, order_lines: [:product]).all
         elsif current_user.has_role? "dispatcher"
             @orders = Order.where(status: [:pending, :on_process])
         elsif current_user.has_role? "delivery-man"
@@ -31,8 +31,11 @@ class OrdersController < ApplicationController
                 )
             end
 
+            user = order.user.as_json()
+
             order.as_json.merge(
-                order_lines: order_lines
+                order_lines: order_lines,
+                user: user
             )
         end
 
