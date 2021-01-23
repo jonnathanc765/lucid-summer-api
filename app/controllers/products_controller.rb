@@ -4,17 +4,17 @@ class ProductsController < ApplicationController
   skip_authorize_resource :only => :related_products
 
   def index
-    where_conditions = {}
 
+    where_conditions = {}
     if search_params[:categories].present?
       where_conditions[:category_id] = search_params[:categories]
     end
 
     name = ''
 
-    if params[:name].present?
+    if search_params[:name].present?
       
-      name = params[:name]
+      name = search_params[:name]
       
     end
 
@@ -76,7 +76,7 @@ class ProductsController < ApplicationController
   end
 
   def search_params
-    params.permit(categories: [])
+    params.permit(:name, :categories)
   end
 
   def set_product

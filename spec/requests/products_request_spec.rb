@@ -61,12 +61,12 @@ RSpec.describe "Products ~>", type: :request do
 
 
       it 'user can retrieve products by category scope' do
+
         category = create(:category)
         category2 = create(:category)
         products = create_list(:product, 5, category_id: category.id)
         products = create_list(:product, 5, category_id: category2.id)
-
-        get "/products?categories[]=1"
+        get "/products?categories=2"
         expect(response).to have_http_status(:ok)
         expect(payload.size).to eq(5)
 

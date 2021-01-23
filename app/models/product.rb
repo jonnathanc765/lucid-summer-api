@@ -4,6 +4,7 @@ class Product < ApplicationRecord
   
   validates :name, :retail_price, :wholesale_price, :approximate_weight_per_piece, presence: true
 
+  attribute :current_price
 
   def current_price 
     if !self.promotion_price.nil?
