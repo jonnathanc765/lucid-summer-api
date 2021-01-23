@@ -43,7 +43,9 @@ class OrdersController < ApplicationController
     end
 
     def create
-        
+
+        taxes_value = 1.16 # Multiply this constant by the price of the product to obtain the price with taxes included
+
         address = Address.find_by(id: order_params[:address_id].to_i)
 
         if address.nil?
@@ -69,7 +71,14 @@ class OrdersController < ApplicationController
             if order.save!
                 
                 cart.cart_lines.each do |line|
-                    order.order_lines.create(product_id: line.product.id, quantity: line[:quantity], unit_type: line[:unit_type], price: line.product.current_price)
+
+                    price = line.product.current_price
+
+                    if !line.product.exempt
+                        price = price * taxes_value
+                    end
+
+                    order.order_lines.create(product_id: line.product.id, quantity: line[:quantity], unit_type: line[:unit_type], price: price)
                 end
 
                 cart.cart_lines.destroy_all

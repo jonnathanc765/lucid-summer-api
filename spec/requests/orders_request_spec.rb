@@ -283,6 +283,31 @@ RSpec.describe "Orders ~>", type: :request do
         expect(CartLine.all.size).to eq(0)
 
       end
+
+      it 'when order it generated taxes are include on final price' do
+
+        cart = create_cart(client_user, false)
+
+        product = create(:product, promotion_price: 4, exempt: false)
+
+        cart.cart_lines.create(product_id: product.id, quantity: 1)
+
+        payment_method = PaymentMethod.create(unique_id: card["id"], user_id: client_user.id, hashed_card_number: card["card_number"], card_brand: card["brand"])
+
+        address = create(:address, user_id: client_user.id)
+        
+        time = Time.now
+
+        post "/orders", params: { address_id: address.id, delivery_date: time, payment_method_id: payment_method.id, device_session_id: "kR1MiQhz2otdIuUlQkbEyitIqVMiI16f" }
+
+        order = Order.first
+
+        expect(response).to have_http_status(:created)
+        expect(payload).to_not be_empty
+        expect(payload["order_lines"]).to_not be_empty
+        expect(payload["order_lines"][0]["price"]).to eq(4 * 1.16)
+
+      end
     
       it 'address is required for generate a order' do
 
