@@ -19,6 +19,14 @@ RSpec.describe "Coordinates", type: :request do
     
   end
 
+  it 'users can retrieve all available coordinates' do
+    coordinate = create(:coordinate)
+    get "/coordinates/#{coordinate.id}"
+    expect(response).to have_http_status(:ok)
+    expect(payload).to_not be_empty
+    expect(payload['zip_code']).to_not be_nil
+  end
+
 
   describe 'POST /coordinates' do
     

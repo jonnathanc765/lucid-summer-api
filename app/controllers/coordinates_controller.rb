@@ -1,10 +1,14 @@
 class CoordinatesController < ApplicationController
-  before_action :set_coordinate, only: [:update, :destroy]
+  before_action :set_coordinate, only: [:update, :destroy, :show]
   load_and_authorize_resource
 
 
   def index 
     render json: Coordinate.all, status: :ok
+  end
+
+  def show 
+    render json: @coordinate, status: :ok
   end
 
   def create 

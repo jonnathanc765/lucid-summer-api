@@ -19,7 +19,7 @@ Rails.application.routes.draw do
   resources :roles, only: [:index]
   resources :available_dates, only: [:index]
   resources :payment_methods, only: [:create, :index]
-  resources :coordinates, only: [:index, :create, :update, :destroy]
+  resources :coordinates, only: [:index, :show, :create, :update, :destroy]
 
 
   # Custom routes
