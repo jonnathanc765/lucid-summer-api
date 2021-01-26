@@ -66,6 +66,8 @@ class OrdersController < ApplicationController
 
         req_response = nil
 
+        exception_error = nil
+
         ActiveRecord::Base.transaction do
 
             if order.save!
@@ -98,16 +100,28 @@ class OrdersController < ApplicationController
             @openpay = OpenpayApi.new("mihqpo64jxhksuoohivz","sk_f6aafbacebd64882a224446b1331ef3c")
 
             @charges = @openpay.create(:charges)
+            
+            flag = false
+
 
             begin
+
                 req_response = @charges.create(charges_details, current_user.customer_id)
                 order.update!(payment_id: req_response["id"])
+
+                # if !current_user.rfc.nil?
+                #     create_invoice(client, order_order_lines)
+                # end
+
             rescue => exception
-                
+                exception_error = exception
                 raise ActiveRecord::Rollback 
-                return render json: { message: exception.description }, status: exception.http_code     
             end
 
+        end
+
+        if exception_error
+            return render json: { message: exception_error.description }, status: exception_error.http_code     
         end
 
         return render json: order.as_json(
@@ -142,6 +156,42 @@ class OrdersController < ApplicationController
 
     def status_params
         params.permit(:status)
+    end
+
+    def create_invoice(client, items)
+
+    request = RestClient::Request.new(
+        method: :post,
+        url: 'https://www.facturapi.io/v1/invoices',
+        user: "sk_test_5Yn0JKD9pGO89ylqLdWAZ8xaXQAPm7NZ",
+        password: '',
+        headers: {
+            accept: :json,
+            content_type: :json
+        },
+        payload: {
+            customer: {
+                legal_name: "#{client.first_name} #{client.last_name}",
+                email: client.email,
+                tax_id: client.rfc
+            },
+            items: items.map do |item|
+                price = item.current_price
+                if price.nil?
+                    price = 0.01
+                end
+                {
+                    quantity: item.quantity,
+                    product: {
+                        description: "#{product.id} #{product.name}",
+                        product_key: product.id,
+                        price: price
+                    }
+                }
+            end,
+            payment_form: "06"
+        }.to_json
+        )
     end
 
 end

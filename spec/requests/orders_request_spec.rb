@@ -162,7 +162,9 @@ RSpec.describe "Orders ~>", type: :request do
           expect(response).to have_http_status(402)
           expect(payload).to_not be_empty 
           expect(payload["message"]).to_not be_nil 
-          expect(payload["message"]).to eq("The card doesn't have sufficient funds")
+          expect(payload["message"]).to eq("The number of retries of charge is greater than allowed")
+
+          expect(Order.all).to be_empty
           
         end
         
@@ -383,22 +385,13 @@ RSpec.describe "Orders ~>", type: :request do
       it 'it updates order to on process' do
         order = create_order client_user
 
-        post "/orders/#{order.id}/update_status", params: {status: "1"}
+        post "/orders/#{order.id}/update_status", params: {status: "on_process"}
 
         expect(response).to have_http_status(:ok)
         expect(payload).to_not be_empty
         expect(payload['status']).to eq("on_process")
       end
 
-      it 'order must be pending for updates status on process' do
-
-        order = create_order client_user, true, 1
-
-        post "/orders/#{order.id}/update_status", params: {status: "1"}
-
-        expect(response).to have_http_status(:unprocessable_entity)
-        expect(payload).to_not be_empty
-      end
     end
   end
 end

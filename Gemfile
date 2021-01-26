@@ -42,6 +42,9 @@ gem 'rack-cors'
 #openpay gem
 gem 'openpay'
 
+# Rest client for petition
+gem "rest-client", "~> 2.1"
+
 group :production do
   # For AWS
   gem 'unicorn', platforms: :ruby
