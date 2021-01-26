@@ -76,6 +76,8 @@ when 'development'
 
   end
 
+  create_list(:coordinate, 20)
+
 when 'test'
   
   # test-specific seeds ...
