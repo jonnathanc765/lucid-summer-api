@@ -11,6 +11,7 @@ class Ability
     can :read, Review
     can :read_limited_categories, Category
     can :create, User
+    can :read, Coordinate
     
     if user.present?
 
@@ -26,6 +27,7 @@ class Ability
         can :manage, Product 
         can :manage, Category
         can :manage, Review
+        can :manage, Coordinate
         can :attach_images, Product
       end
 
