@@ -6,7 +6,7 @@ FactoryBot.define do
     promotion_price { Faker::Number.decimal(l_digits: 2) }
     approximate_weight_per_piece { Faker::Number.decimal(l_digits: 2) }
     exempt { Faker::Boolean::boolean }
-    sat { Faker::Number.number(digits: 10) }
+    sat { "50301500" } # SAT for apples
     category
   end
 end
