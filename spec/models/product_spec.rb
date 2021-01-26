@@ -7,6 +7,7 @@ RSpec.describe Product, type: :model do
       should validate_presence_of(:retail_price)
       should validate_presence_of(:wholesale_price)
       should validate_presence_of(:approximate_weight_per_piece)
+      should validate_presence_of(:sat)
 
     end
   end
@@ -17,6 +18,7 @@ RSpec.describe Product, type: :model do
 
 
   it "it return a real price for product" do 
+
     p1 = create(:product, promotion_price: 10)
 
     expect(p1.current_price).to eq(10)

@@ -72,7 +72,7 @@ class ProductsController < ApplicationController
   private
 
   def product_params
-    params.permit(:name, :retail_price, :wholesale_price, :promotion_price, :approximate_weight_per_piece, :category_id, :exempt)
+    params.permit(:name, :retail_price, :wholesale_price, :promotion_price, :approximate_weight_per_piece, :category_id, :exempt, :sat)
   end
 
   def search_params

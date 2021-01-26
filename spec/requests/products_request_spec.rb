@@ -146,14 +146,15 @@ RSpec.describe "Products ~>", type: :request do
     let(:category) { create(:category) }
 
     it "it save with correct data" do
-      req_payload = { name: "Tomatoes", retail_price: 10, wholesale_price: 8.5, promotion_price: 9.5, approximate_weight_per_piece: 250, category_id: category.id, exempt: false }
+      req_payload = { name: "Tomatoes", retail_price: 10, wholesale_price: 8.5, promotion_price: 9.5, approximate_weight_per_piece: 250, category_id: category.id, exempt: true, sat: 'sat_example' }
       post "/products", params: req_payload
 
       expect(response).to have_http_status(201)
       expect(payload).to_not be_empty
       expect(payload["id"]).to_not be_nil
       expect(payload["category_id"]).to eq(category.id)
-      expect(payload["exempt"]).to eq(false)
+      expect(payload["exempt"]).to eq(true)
+      expect(payload['sat']).to eq("sat_example")
     end
   end
 
@@ -161,7 +162,7 @@ RSpec.describe "Products ~>", type: :request do
     let(:product) { create(:product) }
 
     it "it updates a existing product" do
-      req_payload = { name: "Tomatoes", retail_price: 10, wholesale_price: 8.5, promotion_price: 9.5, approximate_weight_per_piece: 250, exempt: false }
+      req_payload = { name: "Tomatoes", retail_price: 10, wholesale_price: 8.5, promotion_price: 9.5, approximate_weight_per_piece: 250, exempt: false, sat: 'sat_example' }
       put "/products/#{product.id}", params: req_payload
 
       expect(response).to have_http_status(200)
@@ -169,6 +170,7 @@ RSpec.describe "Products ~>", type: :request do
       expect(payload["id"]).to_not be_nil
       expect(payload['name']).to eq("Tomatoes")
       expect(payload['exempt']).to eq(false)
+      expect(payload['sat']).to eq("sat_example")
       expect(Product.all.size).to eq(1)
     end
   end
