@@ -1,3 +1,5 @@
+require 'csv'
+
 class ProductsController < ApplicationController
   before_action :authenticate_user!
   load_and_authorize_resource
@@ -70,6 +72,13 @@ class ProductsController < ApplicationController
   end
 
   def export 
+
+    @products = Product.all
+
+    respond_to do |format|
+      format.html
+      format.csv { send_data @products.to_csv, filename: "products-#{Date.today}.csv" }
+    end
   end
 
   private

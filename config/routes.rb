@@ -8,21 +8,7 @@ Rails.application.routes.draw do
   # Setting up for default host (blobs and path)
   default_url_options :host => ENV['DEFAULT_HOST']
 
-  # Resources
-  resources :users, only: [:index, :show, :create, :update, :destroy]
-  resources :categories, only: [:index, :create, :show, :update, :destroy], constraints: { id: /[0-9]+/ }
-  resources :products, only: [:index, :show, :create, :update, :destroy]
-  resources :cart_lines, only: [:create, :destroy, :update]
-  resources :addresses, only: [:index, :create, :update, :destroy, :show]
-  resources :orders, only: [:index, :create, :show]
-  resources :reviews, only: [:create, :show, :index, :destroy]
-  resources :roles, only: [:index]
-  resources :available_dates, only: [:index]
-  resources :payment_methods, only: [:create, :index]
-  resources :coordinates, only: [:index, :show, :create, :update, :destroy]
-
-
-  # Custom routes
+  # ===  Custom routes  ===
   get '/me', to: 'users#me'
   get '/health', to: 'health#health'
 
@@ -46,5 +32,17 @@ Rails.application.routes.draw do
   # Categories controller 
   get '/categories/limited/', to: 'categories#limited'
 
+  # Resources
+  resources :users, only: [:index, :show, :create, :update, :destroy]
+  resources :categories, only: [:index, :create, :show, :update, :destroy], constraints: { id: /[0-9]+/ }
+  resources :products, only: [:index, :show, :create, :update, :destroy]
+  resources :cart_lines, only: [:create, :destroy, :update]
+  resources :addresses, only: [:index, :create, :update, :destroy, :show]
+  resources :orders, only: [:index, :create, :show]
+  resources :reviews, only: [:create, :show, :index, :destroy]
+  resources :roles, only: [:index]
+  resources :available_dates, only: [:index]
+  resources :payment_methods, only: [:create, :index]
+  resources :coordinates, only: [:index, :show, :create, :update, :destroy]
 
 end

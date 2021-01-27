@@ -1,5 +1,6 @@
 class ApplicationController < ActionController::API
   include DeviseTokenAuth::Concerns::SetUserByToken
+  include ActionController::MimeResponds
 
   rescue_from ActiveRecord::RecordInvalid do |e|
     render json: {error: e.message}, status: :unprocessable_entity
