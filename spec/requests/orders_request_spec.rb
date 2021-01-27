@@ -162,7 +162,7 @@ RSpec.describe "Orders ~>", type: :request do
           expect(response).to have_http_status(402)
           expect(payload).to_not be_empty 
           expect(payload["message"]).to_not be_nil 
-          expect(payload["message"]).to eq("The number of retries of charge is greater than allowed")
+          expect(payload["message"]).to eq("The card doesn't have sufficient funds" )
 
           expect(Order.all).to be_empty
           
