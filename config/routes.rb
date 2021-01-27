@@ -25,15 +25,25 @@ Rails.application.routes.draw do
   # Custom routes
   get '/me', to: 'users#me'
   get '/health', to: 'health#health'
+
+  # Carts controller
   get "/cart", to: 'carts#show'
   
+  # Products controller
   get "/related_products(/:category_id)", to: "products#related_products"
+  get "/products/export", to: 'products#export'
+
+  # Product images controller 
   post "/product_images/:product_id", to: 'product_images#create'
   delete "/product_images/:product_id/:id", to: 'product_images#destroy'
 
+  # Checklist controller 
   post '/checklist/:id', to: 'checklist#check'
+
+  # Orders controller 
   post '/orders/:id/update_status', to: 'orders#update_status'
 
+  # Categories controller 
   get '/categories/limited/', to: 'categories#limited'
 
 

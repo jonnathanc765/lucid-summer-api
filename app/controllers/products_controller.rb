@@ -69,6 +69,9 @@ class ProductsController < ApplicationController
 
   end
 
+  def export 
+  end
+
   private
 
   def product_params

@@ -14,4 +14,19 @@ class Product < ApplicationRecord
     end
   end
 
+
+  def self.to_csv
+    
+    attributes = %w{id name retail_price wholesale_price promotion_price approximate_weight_per_piece sat}
+
+    CSV.generate(headers: true) do |csv|
+      csv << attributes
+
+      all.each do |user|
+        csv << attributes.map{ |attr| user.send(attr) }
+      end
+    end
+  end
+
+
 end

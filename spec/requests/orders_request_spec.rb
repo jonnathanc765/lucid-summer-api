@@ -286,6 +286,33 @@ RSpec.describe "Orders ~>", type: :request do
 
       end
 
+      it 'client can generate a order and generate invoice (facturapi integration)' do
+
+        client_user.update(rfc: "ABCD111111CBA")
+
+        cart = create_cart client_user
+
+        payment_method = PaymentMethod.create(unique_id: card["id"], user_id: client_user.id, hashed_card_number: card["card_number"], card_brand: card["brand"])
+
+        address = create(:address, user_id: client_user.id)
+        
+        time = Time.now
+
+        post "/orders", params: { address_id: address.id, delivery_date: time, payment_method_id: payment_method.id, device_session_id: "kR1MiQhz2otdIuUlQkbEyitIqVMiI16f" }
+
+        order = Order.first
+
+        expect(response).to have_http_status(:created)
+        expect(payload).to_not be_empty
+        expect(payload["status"]).to eq("pending")
+        expect(payload["address"]).to eq(address.line)
+        expect(payload["delivery_date"]).to_not be_nil
+        expect(order.delivery_date).to_not be_nil
+        expect(payload['order_lines'].size).to eq(10)
+        expect(CartLine.all.size).to eq(0)
+
+      end
+
       it 'when order it generated taxes are include on final price' do
 
         cart = create_cart(client_user, false)

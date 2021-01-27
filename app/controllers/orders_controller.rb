@@ -109,11 +109,10 @@ class OrdersController < ApplicationController
                 req_response = @charges.create(charges_details, current_user.customer_id)
                 order.update!(payment_id: req_response["id"])
 
-                if !current_user.rfc.nil?
-                    create_invoice(client, order_order_lines)
-                end
+               
 
             rescue => exception
+
                 exception_error = exception
                 raise ActiveRecord::Rollback 
             end
@@ -122,6 +121,16 @@ class OrdersController < ApplicationController
 
         if exception_error
             return render json: { message: exception_error.description }, status: exception_error.http_code     
+        end
+
+        begin
+
+            if !current_user.rfc.nil?
+                create_invoice(current_user, order.order_lines)
+            end
+            
+        rescue => exception
+
         end
 
         return render json: order.as_json(
@@ -160,6 +169,18 @@ class OrdersController < ApplicationController
 
     def create_invoice(client, items)
 
+        customer = nil 
+
+        if client.facturapi_id.nil?
+            customer = {
+                legal_name: "#{client.first_name} #{client.last_name}",
+                email: client.email,
+                tax_id: client.rfc
+            }
+        else 
+            customer = client.facturapi_id
+        end
+
         request = RestClient::Request.new(
             method: :post,
             url: 'https://www.facturapi.io/v1/invoices',
@@ -170,21 +191,17 @@ class OrdersController < ApplicationController
                 content_type: :json
             },
             payload: {
-                customer: {
-                    legal_name: "#{client.first_name} #{client.last_name}",
-                    email: client.email,
-                    tax_id: client.rfc
-                },
+                customer: customer,
                 items: items.map do |item|
-                    price = item.current_price
+                    price = item.price
                     if price.nil? 
                         price = 0.01
                     end
                     {
                         quantity: item.quantity,
                         product: {
-                            description: "#{product.id} #{product.name}",
-                            product_key: product.sat,
+                            description: "#{item.product.id} #{item.product.name}",
+                            product_key: item.product.sat,
                             price: price
                         }
                     }
@@ -193,5 +210,6 @@ class OrdersController < ApplicationController
             }.to_json
         )
 
+        return request.execute
     end
 end

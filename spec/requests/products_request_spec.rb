@@ -175,6 +175,14 @@ RSpec.describe "Products ~>", type: :request do
     end
   end
 
+  it 'admins can export list of products' do
+    
+    get "/products/export"
+    expect(response).to have_http_status(:ok)
+    expect(payload).to_not be_empty
+
+  end
+
   describe "DELETE /products/:id" do
     let(:product) { create(:product) }
 
