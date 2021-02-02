@@ -20,7 +20,7 @@ class ProductsController < ApplicationController
       
     end
 
-    @products = Product.where(where_conditions).where("name LIKE '%#{name}%'").order(id: :asc).includes(:category)
+    @products = Product.where(where_conditions).where("name LIKE '%#{name}%'").order(id: :desc).includes(:category)
 
     render json: @products, include: [:category], status: :ok
   end
