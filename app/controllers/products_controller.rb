@@ -50,8 +50,6 @@ class ProductsController < ApplicationController
 
   def related_products 
 
-    # authorize! :related_products
-
     if params[:category_id].present? 
       @products = Product.where(category_id: params[:category_id]).limit(25).order_by_rand.limit(25)
     else
@@ -71,14 +69,25 @@ class ProductsController < ApplicationController
 
   end
 
-  def export 
+  def import 
 
-    @products = Product.all
+    file = params[:products_file]
+    parsed = CSV.read(file)
+    header = parsed[0]
 
-    respond_to do |format|
-      format.html
-      format.csv { send_data @products.to_csv, filename: "products-#{Date.today}.csv" }
+    if !"id".in?(header) || !"name".in?(header) || !"retail_price".in?(header) || !"promotion_price".in?(header) || !"wholesale_price".in?(header) || !"approximate_weight_per_piece".in?(header)
+      return render json: {message: 'error'}, status: :bad_request
     end
+
+    CSV.foreach(file, headers: true) do |row|
+      product = Product.find(row["id"])
+      if !product.nil?
+        product.update(name: row["name"], retail_price: row["retail_price"], promotion_price: row["promotion_price"], wholesale_price: row["wholesale_price"], approximate_weight_per_piece: row["approximate_weight_per_piece"])
+      end
+    end
+
+    render json: {message: 'success'}, status: :ok
+
   end
 
   private

@@ -17,7 +17,7 @@ Rails.application.routes.draw do
   
   # Products controller
   get "/related_products(/:category_id)", to: "products#related_products"
-  get "/products/export", to: 'products#export'
+  post "/products/import", to: 'products#import'
 
   # Product images controller 
   post "/product_images/:product_id", to: 'product_images#create'

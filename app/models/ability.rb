@@ -28,7 +28,6 @@ class Ability
         can :manage, Category
         can :manage, Review
         can :manage, Coordinate
-        can :attach_images, Product
       end
 
       if user.has_role? "client"
