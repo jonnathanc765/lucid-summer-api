@@ -168,11 +168,12 @@ RSpec.describe "Users ~>", type: :request do
         describe "create a user ~>" do
   
           it "with valid data it success" do
-            req_payload = { first_name: "Jose", last_name: "Perez", email: "jose@perez.com", phone: "+512 584 84765", password: "password" }
+            req_payload = { first_name: "Jose", last_name: "Perez", email: "jose@perez.com", phone: "+512 584 84765", password: "password", rfc: "212312" }
             post "/users", :params => req_payload
             expect(response).to have_http_status(:created)
             expect(payload).to_not be_empty
             expect(payload["id"]).to_not be_nil
+            expect(payload["rfc"]).to eq("212312")
           end
   
           it "with invalid data should return a error message" do
@@ -211,11 +212,12 @@ RSpec.describe "Users ~>", type: :request do
           let!(:new_user) { create(:user) }
   
           it "with valid data it success" do
-            req_payload = { first_name: "Jose", last_name: "Perez", email: "jose@perez.com", phone: "+512 584 84765", password: "password" }
+            req_payload = { first_name: "Jose", last_name: "Perez", email: "jose@perez.com", phone: "+512 584 84765", password: "password", rfc: "212312" }
             put "/users/#{new_user.id}", params: req_payload
             expect(response).to have_http_status(:ok)
             expect(payload).to_not be_nil
             expect(payload["id"]).to eq(new_user.id)
+            expect(payload["rfc"]).to eq("212312")
           end
   
           let!(:new_user) { create(:user) }

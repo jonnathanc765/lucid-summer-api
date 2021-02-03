@@ -109,8 +109,6 @@ class OrdersController < ApplicationController
                 req_response = @charges.create(charges_details, current_user.customer_id)
                 order.update!(payment_id: req_response["id"])
 
-               
-
             rescue => exception
 
                 exception_error = exception
@@ -125,8 +123,12 @@ class OrdersController < ApplicationController
 
         begin
 
-            if !current_user.rfc.nil?
-                create_invoice(current_user, order.order_lines)
+            if !current_user.rfc.nil? && params[:generate_invoice].present? && params[:generate_invoice] 
+                result = create_invoice(current_user, order.order_lines)
+                if (result.code == 201)
+                    result = JSON.parse(result.body)
+                    order.update(facturapi_id: result["id"])
+                end
             end
             
         rescue => exception
